@@ -4,8 +4,6 @@
 
 ;; * Use argv to load or skip loading certain parts of the config.
 ;;   This way, I can add a config suitable for commit messages.
-;; * Improve the narrow-margins, make it a mode that scales with windows
-;;   resizing.
 ;; * Automatically open a new comment line when pressing RET while on a comment
 ;;   line.
 
@@ -75,6 +73,18 @@ Usage: (package-require 'package)"
 
 ;; Make sure paredit is active when clojure mode is active.
 (add-hook 'clojure-mode-hook 'paredit-mode)
+
+
+;;;-----------------------------------------------------------------------------
+;;; Auto-completion
+;;;-----------------------------------------------------------------------------
+
+;; Have standard auto-completion
+(package-require 'auto-complete)
+(global-auto-complete-mode 1)
+
+;; Have auto-completion with using the nrepl session.
+(package-require 'ac-nrepl)
 
 
 ;;;-----------------------------------------------------------------------------
