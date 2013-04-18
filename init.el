@@ -51,8 +51,8 @@ Usage: (package-require 'package)"
 (load-theme 'solarized-dark t)
 
 ;; Set the color of the modeline (statusbar).
-(set-face-background 'modeline "#ddddee") ; the text color.
-(set-face-foreground 'modeline "#337744") ; the bar color.
+(set-face-background 'mode-line "#ddddee") ; the text color.
+(set-face-foreground 'mode-line "#337744") ; the bar color.
 
 ;; Disable the menubar, toolbar, scrollbars and set a decent size for the window
 ;; when using the window system.
