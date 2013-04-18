@@ -2,9 +2,9 @@
 ;;; Todo items
 ;;;-----------------------------------------------------------------------------
 
-;; * Use argv to load or skip loading certain parts of the config. 
+;; * Use argv to load or skip loading certain parts of the config.
 ;;   This way, I can add a config suitable for commit messages.
-;; * Improve the narrow-margins, make it a mode that scales with windows 
+;; * Improve the narrow-margins, make it a mode that scales with windows
 ;;   resizing.
 ;; * Automatically open a new comment line when pressing RET while on a comment
 ;;   line.
@@ -21,7 +21,7 @@
 
 ;; Make sure a package is installed
 (defun package-require (package)
-  "Install a package unless it is already installed 
+  "Install a package unless it is already installed
 or a feature with the same name is already active.
 
 Usage: (package-require 'package)"
@@ -35,7 +35,7 @@ Usage: (package-require 'package)"
 	     (package-install package)))))
 
 ;; Initialize installed packages
-(package-initialize)  
+(package-initialize)
 ;; Package init not needed, since it is done anyway in emacs 24 after reading the init
 ;; but we have to load the list of available packages
 (when (not package-archive-contents)
@@ -99,7 +99,7 @@ Usage: (package-require 'package)"
 (global-set-key [backtab] 'er/expand-region)
 
 ;; Have multiple cursors, based on the current region. Use C-d to have a cursor
-;; on the next occurence. The package advices to use C-> and C-<, but that I 
+;; on the next occurence. The package advices to use C-> and C-<, but that I
 ;; did not get that to wirk with osx terminals (Terminal.app and iTerm2). C-d
 ;; comes close to the Apple-d I was used to with SublimeText 2.
 (package-require 'multiple-cursors)
@@ -134,6 +134,13 @@ Usage: (package-require 'package)"
 ;; Wrap words instread of breaking them.
 (global-visual-line-mode t)
 
+;; Show matching paren.
+(show-paren-mode t)
+
+;; Make Emacs ask about missing newline at end of file and remove trailing
+;; spaces.
+(setq require-final-newline 'ask)
+(add-hook 'before-save-hook 'delete-trailing-whitespace)
 
 ;;;-----------------------------------------------------------------------------
 ;;; Emacs automagically managed settings. Don't touch :)
