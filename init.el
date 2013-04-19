@@ -30,7 +30,7 @@ Usage: (package-require 'package)"
       (require package)
     ; if we cannot require it, it does not exist, yet. So install it.
     (error (when (not (package-installed-p package))
-	     (package-install package)))))
+             (package-install package)))))
 
 ;; Initialize installed packages
 (package-initialize)
@@ -79,12 +79,58 @@ Usage: (package-require 'package)"
 ;;; Auto-completion
 ;;;-----------------------------------------------------------------------------
 
-;; Have standard auto-completion
-(package-require 'auto-complete)
-(global-auto-complete-mode 1)
+;; Have fuzzy completion, but does not seem to work yet...
+(package-require 'fuzzy)
 
-;; Have auto-completion with using the nrepl session.
+;; Have auto-completion, with standard settings..
+(package-require 'auto-complete)
+(require 'auto-complete-config)
+(ac-config-default)
+(global-auto-complete-mode t)
+
+;; Use the following sources for auto-completion.
+(set-default 'ac-sources
+             '(ac-source-dictionary                  ; from dict files.
+               ac-source-words-in-buffer             ; current buffer
+               ac-source-words-in-same-mode-buffers  ; alike buffers
+               ac-source-filename                    ; filesystem paths
+               ac-source-functions                   ; elisp functions
+               ac-source-symbols))                   ; elisp symbols
+
+;; Use auto-completion in the following modes.
+(dolist (mode '(text-mode html-mode nxml-mode sh-mode clojure-mode
+                          lisp-mode latex-mode))
+  (add-to-list 'ac-modes mode))
+
+;; Map auto-complete to M-TAB, to use if it does not pop up automatically.
+(define-key ac-mode-map (kbd "M-TAB") 'auto-complete)
+
+;; Have auto-completion using the nrepl session.
 (package-require 'ac-nrepl)
+
+
+;;;-----------------------------------------------------------------------------
+;;; Tab and spaces handling
+;;;-----------------------------------------------------------------------------
+
+;; Make Emacs ask about missing newline at end of file on save.
+(setq require-final-newline 'ask)
+
+;; Remove trailing spaces on save.
+(add-hook 'before-save-hook 'delete-trailing-whitespace)
+
+;; Use no tabs by default. Modes that really need tabs should enable
+;; indent-tabs-mode explicitly. And if indent-tabs-mode is off, untabify
+;; before saving.
+(setq-default indent-tabs-mode nil)
+
+(defun untabify-maybe ()
+  (print "untabify?")
+  (when (not indent-tabs-mode)
+    (print "untabify!")
+    (untabify (point-min) (point-max))))
+
+(add-hook 'before-save-hook 'untabify-maybe)
 
 
 ;;;-----------------------------------------------------------------------------
@@ -136,7 +182,8 @@ Usage: (package-require 'package)"
 ;; Show column number next to linenumber in the status bar.
 (column-number-mode t)
 
-;; Enable ido mode.
+;; Enable ido mode. Remember that C-j uses the current selection in the ido
+;; minibuffer, which comes in handy when selecting a dired directory (M-x dired).
 (setq ido-enable-flex-matching t)
 (setq ido-everywhere t)
 (ido-mode t)
@@ -147,10 +194,18 @@ Usage: (package-require 'package)"
 ;; Show matching paren.
 (show-paren-mode t)
 
-;; Make Emacs ask about missing newline at end of file and remove trailing
-;; spaces.
-(setq require-final-newline 'ask)
-(add-hook 'before-save-hook 'delete-trailing-whitespace)
+;; Go to the last change, using M-.
+;; M-. can conflict with etags, but I don't use that feature.
+(package-require 'goto-chg)
+(global-set-key (kbd "M-.") 'goto-last-change)
+
+;; Save backups and autosaves in the system's temporary directory.
+(setq backup-directory-alist `((".*" . ,temporary-file-directory)))
+(setq auto-save-file-name-transforms `((".*" ,temporary-file-directory t)))
+
+;; Hilight the current line.
+(global-hl-line-mode t)
+
 
 ;;;-----------------------------------------------------------------------------
 ;;; Emacs automagically managed settings. Don't touch :)
