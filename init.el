@@ -206,6 +206,10 @@ Usage: (package-require 'package)"
 ;; Hilight the current line.
 (global-hl-line-mode t)
 
+;; Self-inflicted masochism.
+(package-require 'guru-mode)
+(guru-global-mode t)
+
 
 ;;;-----------------------------------------------------------------------------
 ;;; Emacs automagically managed settings. Don't touch :)
