@@ -74,6 +74,15 @@ Usage: (package-require 'package)"
 ;; Make sure paredit is active when clojure mode is active.
 (add-hook 'clojure-mode-hook 'paredit-mode)
 
+;; Pretty fn, from emacs starter kit (esk).
+(defun esk-pretty-fn ()
+  (font-lock-add-keywords nil `(("(\\(\\<fn\\>\\)"
+                                 (0 (progn (compose-region (match-beginning 1)
+                                                           (match-end 1)
+                                                           "\u03BB"
+                                                           'decompose-region)))))))
+(add-hook 'clojure-mode-hook 'esk-pretty-fn)
+
 
 ;;;-----------------------------------------------------------------------------
 ;;; Auto-completion
@@ -173,6 +182,7 @@ Usage: (package-require 'package)"
 ;; next window. Only active when having 3 or more windows.
 (package-require 'win-switch)
 (global-set-key (kbd "C-x o") 'win-switch-dispatch)
+(global-set-key (kbd "M-o") 'win-switch-dispatch)
 
 ;; Go straight to the *scratch* buffer, i.e. skip the help message. And set a
 ;; nice welcoming message.
@@ -209,6 +219,12 @@ Usage: (package-require 'package)"
 ;; Self-inflicted masochism.
 (package-require 'guru-mode)
 (guru-global-mode t)
+
+;; Switch back to previous buffer, with C-c b.
+(defun switch-to-previous-buffer ()
+  (interactive)
+  (switch-to-buffer (other-buffer (current-buffer) 1)))
+(global-set-key (kbd "C-c b") 'switch-to-previous-buffer)
 
 
 ;;;-----------------------------------------------------------------------------
