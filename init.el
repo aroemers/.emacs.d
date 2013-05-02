@@ -155,6 +155,7 @@ Usage: (package-require 'package)"
 
 ;; Show what has changed since the last commit in a file.
 (package-require 'git-gutter)
+(global-git-gutter-mode t)
 
 ;; Easily expand a region to the enclosing scope, using backtab (shift+tab).
 ;; The package advices C-= as key, but it is difficult to get that to work with
@@ -217,8 +218,8 @@ Usage: (package-require 'package)"
 (global-hl-line-mode t)
 
 ;; Self-inflicted masochism.
-(package-require 'guru-mode)
-(guru-global-mode t)
+;(package-require 'guru-mode)
+;(guru-global-mode t)
 
 ;; Switch back to previous buffer, with C-c b.
 (defun switch-to-previous-buffer ()
