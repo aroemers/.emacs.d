@@ -245,6 +245,14 @@ Usage: (package-require 'package)"
 (package-require 'projectile)
 (projectile-global-mode t)
 
+;; Integrate with the system's clipboard, does not seem to work though.
+(package-require 'simpleclip)
+(simpleclip-mode t)
+
+;; Automatic indention on RET and yanks, and only one space on forward-kills.
+(package-require 'auto-indent-mode)
+(auto-indent-global-mode t)
+
 
 ;;;-----------------------------------------------------------------------------
 ;;; Emacs automagically managed settings. Don't touch :)
