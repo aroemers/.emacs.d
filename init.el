@@ -241,6 +241,10 @@ Usage: (package-require 'package)"
   (switch-to-buffer (other-buffer (current-buffer) 1)))
 (global-set-key (kbd "C-c b") 'switch-to-previous-buffer)
 
+;; Add projectile, e.g. for quickly opening files and searching in files.
+(package-require 'projectile)
+(projectile-global-mode t)
+
 
 ;;;-----------------------------------------------------------------------------
 ;;; Emacs automagically managed settings. Don't touch :)
