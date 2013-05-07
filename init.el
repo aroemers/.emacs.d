@@ -34,8 +34,8 @@ Usage: (package-require 'package)"
 
 ;; Initialize installed packages
 (package-initialize)
-;; Package init not needed, since it is done anyway in emacs 24 after reading the init
-;; but we have to load the list of available packages
+;; Package init not needed, since it is done anyway in emacs 24 after reading
+;; the init but we have to load the list of available packages
 (when (not package-archive-contents)
   (package-refresh-contents))
 
@@ -66,12 +66,12 @@ Usage: (package-require 'package)"
 ;;;-----------------------------------------------------------------------------
 
 ;; Require the needed packages.
-(package-require 'paredit)
 (package-require 'clojure-mode)
 (package-require 'nrepl)
 (package-require 'nrepl-ritz)
 
 ;; Make sure paredit is active when clojure mode is active.
+(package-require 'paredit)
 (add-hook 'clojure-mode-hook 'paredit-mode)
 
 ;; Pretty fn, from emacs starter kit (esk).
@@ -82,6 +82,20 @@ Usage: (package-require 'package)"
                                                            "\u03BB"
                                                            'decompose-region)))))))
 (add-hook 'clojure-mode-hook 'esk-pretty-fn)
+
+
+;;;-----------------------------------------------------------------------------
+;;; Scala mode
+;;;-----------------------------------------------------------------------------
+
+;; Require the needed packages and make sure it is active when a Scala file is
+;; loaded. Note that there is also a Scala-mode2, which can check out some day.
+(package-require 'scala-mode)
+(require 'scala-mode-auto)
+
+;; Make sure paredit is active when Scala mode is active.
+(package-require 'paredit)
+(add-hook 'scala-mode-hook 'paredit-mode)
 
 
 ;;;-----------------------------------------------------------------------------
@@ -108,7 +122,7 @@ Usage: (package-require 'package)"
 
 ;; Use auto-completion in the following modes.
 (dolist (mode '(text-mode html-mode nxml-mode sh-mode clojure-mode
-                          lisp-mode latex-mode))
+                          lisp-mode latex-mode scala-mode))
   (add-to-list 'ac-modes mode))
 
 ;; Map auto-complete to M-TAB, to use if it does not pop up automatically.
@@ -229,6 +243,18 @@ Usage: (package-require 'package)"
 
 ;; Don't require two spaces between sentences when moving with M-e and M-a.
 (setq sentence-end-double-space nil)
+
+;; Add projectile, e.g. for quickly opening files and searching in files.
+(package-require 'projectile)
+(projectile-global-mode t)
+
+;; Integrate with the system's clipboard, does not seem to work though.
+(package-require 'simpleclip)
+(simpleclip-mode t)
+
+;; Automatic indention on RET and yanks, and only one space on forward-kills.
+(package-require 'auto-indent-mode)
+(auto-indent-global-mode t)
 
 
 ;;;-----------------------------------------------------------------------------

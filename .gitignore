@@ -2,3 +2,5 @@
 /auto-save-list/
 /elpa/
 /ac-comphist.dat
+/.mc-lists.el
+/projectile.cache
