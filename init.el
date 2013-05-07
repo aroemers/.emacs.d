@@ -148,9 +148,7 @@ Usage: (package-require 'package)"
 (setq-default indent-tabs-mode nil)
 
 (defun untabify-maybe ()
-  (print "untabify?")
   (when (not indent-tabs-mode)
-    (print "untabify!")
     (untabify (point-min) (point-max))))
 
 (add-hook 'before-save-hook 'untabify-maybe)
