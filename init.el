@@ -227,6 +227,9 @@ Usage: (package-require 'package)"
   (switch-to-buffer (other-buffer (current-buffer) 1)))
 (global-set-key (kbd "C-c b") 'switch-to-previous-buffer)
 
+;; Don't require two spaces between sentences when moving with M-e and M-a.
+(setq sentence-end-double-space nil)
+
 
 ;;;-----------------------------------------------------------------------------
 ;;; Emacs automagically managed settings. Don't touch :)
