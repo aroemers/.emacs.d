@@ -102,7 +102,7 @@ Usage: (package-require 'package)"
 ;;; Auto-completion
 ;;;-----------------------------------------------------------------------------
 
-;; Have fuzzy completion, but does not seem to work yet...
+;; Have fuzzy completion, but does not seem to work yet as expected.
 (package-require 'fuzzy)
 
 ;; Have auto-completion, with standard settings..
@@ -178,7 +178,7 @@ Usage: (package-require 'package)"
 
 ;; Have multiple cursors, based on the current region. Use C-d to have a cursor
 ;; on the next occurence. The package advices to use C-> and C-<, but that I
-;; did not get that to wirk with osx terminals (Terminal.app and iTerm2). C-d
+;; did not get that to work with osx terminals (Terminal.app and iTerm2). C-d
 ;; comes close to the Apple-d I was used to with SublimeText 2.
 (package-require 'multiple-cursors)
 (global-set-key (kbd "C-d") 'mc/mark-next-like-this)
@@ -246,7 +246,9 @@ Usage: (package-require 'package)"
 (package-require 'projectile)
 (projectile-global-mode t)
 
-;; Integrate with the system's clipboard, does not seem to work though.
+;; Integrate with the system's clipboard, does not seem to work in the
+;; terminal on OS X Mountain Lion, while it does work in a terminal on
+;; OS X Lion.
 (package-require 'simpleclip)
 (simpleclip-mode t)
 
@@ -262,6 +264,12 @@ Usage: (package-require 'package)"
 
 ;; Use git from within emacs.
 (package-require 'magit)
+
+;; Have emacs reload buffers from the disk when changed. Currently, it does not
+;; warn when the buffer is modified _and_ the the file on disk has been
+;; modified. Also, watch out for lots of traffic when opening files via a
+;; network.
+(global-auto-revert-mode t)
 
 
 ;;;-----------------------------------------------------------------------------
