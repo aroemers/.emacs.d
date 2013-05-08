@@ -253,6 +253,15 @@ Usage: (package-require 'package)"
 ;; Automatic indention on RET and yanks, and only one space on forward-kills.
 (package-require 'auto-indent-mode)
 (auto-indent-global-mode t)
+(add-to-list 'auto-indent-disabled-modes-list 'nrepl-mode)
+
+;; Have some smoother scrolling when on a window system.
+(when window-system
+  (setq mouse-wheel-scroll-amount '(2 ((shift) . 1)))
+  (setq mouse-wheel-progressive-speed nil))
+
+;; Use git from within emacs.
+(package-require 'magit)
 
 
 ;;;-----------------------------------------------------------------------------
