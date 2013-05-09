@@ -2,8 +2,6 @@
 ;;; Todo items
 ;;;-----------------------------------------------------------------------------
 
-;; * Use argv to load or skip loading certain parts of the config.
-;;   This way, I can add a config suitable for commit messages.
 ;; * Automatically open a new comment line when pressing RET while on a comment
 ;;   line.
 
@@ -176,12 +174,15 @@ Usage: (package-require 'package)"
 (package-require 'expand-region)
 (global-set-key [backtab] 'er/expand-region)
 
-;; Have multiple cursors, based on the current region. Use C-d to have a cursor
-;; on the next occurence. The package advices to use C-> and C-<, but that I
-;; did not get that to work with osx terminals (Terminal.app and iTerm2). C-d
-;; comes close to the Apple-d I was used to with SublimeText 2.
+;; Have multiple cursors, based on the current region (or just a cursor on the
+;; next line if no region is selected). Use M-s and/or M-r to have a cursor
+;; on the next or previous occurence. The package advices to use C-> and C-<,
+;; but this won't work with osx terminals (Terminal.app and iTerm2) without
+;; extensive abuse of keycodes. Also, M-x mc/mark-more-like-this-extended RET
+;; is helpful when quickly adding and skipping occurences.
 (package-require 'multiple-cursors)
-(global-set-key (kbd "C-d") 'mc/mark-next-like-this)
+(global-set-key (kbd "M-r") 'mc/mark-previous-like-this)
+(global-set-key (kbd "M-s") 'mc/mark-next-like-this)
 
 ;; Have ido like completions for M-x (execute-extended-command).
 ;; It also gives a M-X shortcut to only show the commands from the
@@ -270,6 +271,11 @@ Usage: (package-require 'package)"
 ;; modified. Also, watch out for lots of traffic when opening files via a
 ;; network.
 (global-auto-revert-mode t)
+
+;; Have the home and end key behave as they should within emacs, i.e. move to
+;; the beginning or end of the line, respectively.
+(define-key global-map [home] 'beginning-of-line)
+(define-key global-map [end] 'end-of-line)
 
 
 ;;;-----------------------------------------------------------------------------
