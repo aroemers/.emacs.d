@@ -277,6 +277,11 @@ Usage: (package-require 'package)"
 (define-key global-map [home] 'beginning-of-line)
 (define-key global-map [end] 'end-of-line)
 
+;; Disable the command key on OS X. This does imply that simpleclip functions
+;; need to be called with M-x.
+(when (eq system-type 'darwin)
+  (setq mac-command-modifier nil))
+
 
 ;;;-----------------------------------------------------------------------------
 ;;; Emacs automagically managed settings. Don't touch :)
