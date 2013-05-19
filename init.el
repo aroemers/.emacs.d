@@ -273,6 +273,16 @@ Usage: (package-require 'package)"
 (define-key global-map [home] 'beginning-of-line)
 (define-key global-map [end] 'end-of-line)
 
+;; Have Paredit enabled while in emacs-lisp mode.
+(add-hook 'emacs-lisp-mode-hook 'paredit-mode)
+
+;; Open the current file as root.
+(defun current-as-root ()
+  "Reopen current file as root"
+  (interactive)
+  (set-visited-file-name (concat "/sudo::" (buffer-file-name)))
+  (setq buffer-read-only nil))
+
 
 ;;;-----------------------------------------------------------------------------
 ;;; Emacs automagically managed settings. Don't touch :)
