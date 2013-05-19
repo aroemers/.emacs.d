@@ -91,10 +91,6 @@ Usage: (package-require 'package)"
 (package-require 'scala-mode)
 (require 'scala-mode-auto)
 
-;; Make sure paredit is active when Scala mode is active.
-(package-require 'paredit)
-(add-hook 'scala-mode-hook 'paredit-mode)
-
 
 ;;;-----------------------------------------------------------------------------
 ;;; Auto-completion
