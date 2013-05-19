@@ -253,6 +253,7 @@ Usage: (package-require 'package)"
 (package-require 'auto-indent-mode)
 (auto-indent-global-mode t)
 (add-to-list 'auto-indent-disabled-modes-list 'nrepl-mode)
+(setq auto-indent-blank-lines-on-move nil) ; No indent while moving, it's weird
 
 ;; Have some smoother scrolling when on a window system.
 (when window-system
@@ -282,6 +283,12 @@ Usage: (package-require 'package)"
   (interactive)
   (set-visited-file-name (concat "/sudo::" (buffer-file-name)))
   (setq buffer-read-only nil))
+
+;; Disable the command key on OS X. This does imply that simpleclip functions
+;; need to be called with M-x. Unfortunately, this also means Command-V (paste)
+;; does not work either when in a window-system.
+;(when (eq system-type 'darwin)
+;  (setq mac-command-modifier nil))
 
 
 ;;;-----------------------------------------------------------------------------
