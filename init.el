@@ -175,14 +175,14 @@ Usage: (package-require 'package)"
 (global-set-key [backtab] 'er/expand-region)
 
 ;; Have multiple cursors, based on the current region (or just a cursor on the
-;; next line if no region is selected). Use M-s and/or M-r to have a cursor
+;; next line if no region is selected). Use M-n and/or M-p to have a cursor
 ;; on the next or previous occurence. The package advices to use C-> and C-<,
 ;; but this won't work with osx terminals (Terminal.app and iTerm2) without
 ;; extensive abuse of keycodes. Also, M-x mc/mark-more-like-this-extended RET
 ;; is helpful when quickly adding and skipping occurences.
 (package-require 'multiple-cursors)
-(global-set-key (kbd "M-r") 'mc/mark-previous-like-this)
-(global-set-key (kbd "M-s") 'mc/mark-next-like-this)
+(global-set-key (kbd "M-p") 'mc/mark-previous-like-this)
+(global-set-key (kbd "M-n") 'mc/mark-next-like-this)
 
 ;; Have ido like completions for M-x (execute-extended-command).
 ;; It also gives a M-X shortcut to only show the commands from the
