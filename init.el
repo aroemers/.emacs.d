@@ -149,6 +149,25 @@ Usage: (package-require 'package)"
 
 
 ;;;-----------------------------------------------------------------------------
+;;; IRC related
+;;;-----------------------------------------------------------------------------
+
+;; Ignore joins and leaves in IRC.
+(setq erc-hide-list '("JOIN" "PART" "QUIT"))
+
+;; Auto-connect when a password is given.
+(defun irc-maybe ()
+  "Connect to IRC, when a password is given."
+  (let ((p (read-passwd "Give password to connect to IRC: ")))
+    (when (> (length p) 0)
+      (erc-tls :server "ie.freebnc.net" :port 6697
+               :nick "aroemers" :password p))))
+
+;; Ask to auto-connect on startup.
+(add-hook 'emacs-startup-hook 'irc-maybe)
+
+
+;;;-----------------------------------------------------------------------------
 ;;; Other niceties
 ;;;-----------------------------------------------------------------------------
 
