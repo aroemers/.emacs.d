@@ -309,8 +309,9 @@ Usage: (package-require 'package)"
 ;(when (eq system-type 'darwin)
 ;  (setq mac-command-modifier nil))
 
-;; Load init.el file in background.
-(find-file-noselect "~/.emacs.d/init.el")
+;; Have a key for loading the init file quickly.
+(global-set-key (kbd "C-c i")
+                (lambda () (interactive) (find-file "~/.emacs.d/init.el")))
 
 
 ;;;-----------------------------------------------------------------------------
