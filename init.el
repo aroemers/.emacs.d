@@ -155,6 +155,9 @@ Usage: (package-require 'package)"
 ;; Ignore joins and leaves in IRC.
 (setq erc-hide-list '("JOIN" "PART" "QUIT"))
 
+;; Scroll down to the bottom automatically.
+(add-hook 'erc-mode-hook 'erc-scrolltobottom-mode)
+
 ;; Auto-connect when a password is given.
 (defun irc-maybe ()
   "Connect to IRC, when a password is given."
@@ -165,6 +168,9 @@ Usage: (package-require 'package)"
 
 ;; Ask to auto-connect on startup.
 (add-hook 'emacs-startup-hook 'irc-maybe)
+
+;; Have colorised nick-names.
+(package-require 'erc-hl-nicks)
 
 
 ;;;-----------------------------------------------------------------------------
@@ -312,6 +318,10 @@ Usage: (package-require 'package)"
 ;; Have a key for loading the init file quickly.
 (global-set-key (kbd "C-c i")
                 (lambda () (interactive) (find-file "~/.emacs.d/init.el")))
+
+;; Somewhat saner scrolling.
+(setq scroll-margin 5
+      scroll-conservatively 1000)
 
 
 ;;;-----------------------------------------------------------------------------
