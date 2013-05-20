@@ -290,6 +290,9 @@ Usage: (package-require 'package)"
 ;(when (eq system-type 'darwin)
 ;  (setq mac-command-modifier nil))
 
+;; Load init.el file in background.
+(find-file-noselect "~/.emacs.d/init.el")
+
 
 ;;;-----------------------------------------------------------------------------
 ;;; Emacs automagically managed settings. Don't touch :)
