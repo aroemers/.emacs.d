@@ -153,7 +153,7 @@ Usage: (package-require 'package)"
 ;;;-----------------------------------------------------------------------------
 
 ;; Ignore joins and leaves in IRC.
-(setq erc-hide-list '("JOIN" "PART" "QUIT"))
+(setq erc-hide-list '("JOIN" "PART" "QUIT" "NICK"))
 
 ;; Scroll down to the bottom automatically.
 (add-hook 'erc-mode-hook 'erc-scrolltobottom-mode)
@@ -285,6 +285,10 @@ Usage: (package-require 'package)"
   (setq mouse-wheel-scroll-amount '(2 ((shift) . 1)))
   (setq mouse-wheel-progressive-speed nil))
 
+;; Have smoother scrolling with keyboard.
+(setq scroll-margin 2
+      scroll-conservatively 1000)
+
 ;; Use git from within emacs.
 (package-require 'magit)
 
@@ -318,10 +322,6 @@ Usage: (package-require 'package)"
 ;; Have a key for loading the init file quickly.
 (global-set-key (kbd "C-c i")
                 (lambda () (interactive) (find-file "~/.emacs.d/init.el")))
-
-;; Somewhat saner scrolling.
-(setq scroll-margin 5
-      scroll-conservatively 1000)
 
 
 ;;;-----------------------------------------------------------------------------
