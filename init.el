@@ -81,6 +81,12 @@ Usage: (package-require 'package)"
                                                            'decompose-region)))))))
 (add-hook 'clojure-mode-hook 'esk-pretty-fn)
 
+;; Add better indentation for some symbols.
+(define-clojure-indent
+  (try-let 1)
+  (with-resource 1)
+  (fact 1))
+
 
 ;;;-----------------------------------------------------------------------------
 ;;; Scala mode
