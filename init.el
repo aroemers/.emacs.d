@@ -84,7 +84,7 @@ Usage: (package-require 'package)"
 ;; Add better indentation for some symbols.
 (define-clojure-indent
   (try-let 1)
-  (with-resource 1)
+  (with-resource 'defun)
   (fact 1))
 
 
