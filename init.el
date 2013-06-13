@@ -321,7 +321,8 @@ Usage: (package-require 'package)"
 
 ;; Have a key for loading the init file quickly.
 (global-set-key (kbd "C-c i")
-                (lambda () (interactive) (find-file "~/.emacs.d/init.el")))
+                (lambda () (interactive)
+                  (find-file-other-window "~/.emacs.d/init.el")))
 
 
 ;;;-----------------------------------------------------------------------------
