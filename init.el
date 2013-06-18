@@ -63,39 +63,39 @@ Usage: (package-require 'package)"
 ;;; Highlight top-level comment blocks in lisps
 ;;;-----------------------------------------------------------------------------
 
-(defface hlcomment-face
+(defface hl-comment-block-face
   '((t (:background "burlywood2" :foreground "burlywood4")))
   "Face for comment overlay blocks.")
 
-(defun hlcomment ()
+(defun hl-comment-block ()
   (when (re-search-forward "^;;;" nil t)
     (let ((start (- (point) 3)))
       (end-of-line)
       (let* ((end (+ (point) 1))
              (overlay (make-overlay start end)))
-        (overlay-put overlay 'face 'hlcomment-face)
+        (overlay-put overlay 'face 'hl-comment-block-face)
         (overlay-put overlay 'evaporate t)
         (overlay-put overlay 'priority 999)
         (overlay-put overlay 'for-comments t)))))
 
-(defun hlcomment-all ()
+(defun hl-comment-block-all ()
   (let ((current-point (point)))
     (goto-char 1)
-    (while (hlcomment))
+    (while (hl-comment-block))
     (goto-char current-point)))
 
-(defun hlcomment-update (&optional b e l)
+(defun hl-comment-block-update (&optional b e l)
   (let ((overlays (overlays-in (point-min) (point-max))))
     (while overlays
       (let ((overlay (car overlays)))
         (when (overlay-get overlay 'for-comments)
           (delete-overlay overlay)))
       (setq overlays (cdr overlays)))
-    (hlcomment-all)))
+    (hl-comment-block-all)))
 
-(defun hlcomment-enable ()
-  (add-hook 'after-change-functions 'hlcomment-update nil t)
-  (hlcomment-all))
+(defun hl-comment-block-enable ()
+  (add-hook 'after-change-functions 'hl-comment-block-update nil t)
+  (hl-comment-block-all))
 
 
 ;;;-----------------------------------------------------------------------------
@@ -127,7 +127,7 @@ Usage: (package-require 'package)"
   (fact 1))
 
 ;; Have highlighted comment blocks.
-(add-hook 'clojure-mode-hook 'hlcomment-enable)
+(add-hook 'clojure-mode-hook 'hl-comment-block-enable)
 
 
 ;;;-----------------------------------------------------------------------------
@@ -378,7 +378,7 @@ Usage: (package-require 'package)"
 (add-hook 'prog-mode-hook 'whitespace-mode)
 
 ;; Have highlighted comment blocks in emacs-lisp.
-(add-hook 'emacs-lisp-mode-hook 'hlcomment-enable)
+(add-hook 'emacs-lisp-mode-hook 'hl-comment-block-enable)
 
 
 ;;;-----------------------------------------------------------------------------
