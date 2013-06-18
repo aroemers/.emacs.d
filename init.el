@@ -44,7 +44,7 @@ Usage: (package-require 'package)"
 
 ;; Load the solarized package and activate it.
 (package-require 'color-theme-solarized)
-(load-theme 'solarized-dark t)
+(load-theme 'solarized-light t)
 
 ;; Set the color of the modeline (statusbar).
 (set-face-background 'mode-line "#ddddee") ; the text color.
@@ -57,6 +57,45 @@ Usage: (package-require 'package)"
 (if (fboundp 'menu-bar-mode) (menu-bar-mode -1))
 (when window-system
   (set-frame-size (selected-frame) 180 60))
+
+
+;;;-----------------------------------------------------------------------------
+;;; Highlight top-level comment blocks in lisps
+;;;-----------------------------------------------------------------------------
+
+(defface hlcomment-face
+  '((t (:background "burlywood2" :foreground "burlywood4")))
+  "Face for comment overlay blocks.")
+
+(defun hlcomment ()
+  (when (re-search-forward "^;;;" nil t)
+    (let ((start (- (point) 3)))
+      (end-of-line)
+      (let* ((end (+ (point) 1))
+             (overlay (make-overlay start end)))
+        (overlay-put overlay 'face 'hlcomment-face)
+        (overlay-put overlay 'evaporate t)
+        (overlay-put overlay 'priority 999)
+        (overlay-put overlay 'for-comments t)))))
+
+(defun hlcomment-all ()
+  (let ((current-point (point)))
+    (goto-char 1)
+    (while (hlcomment))
+    (goto-char current-point)))
+
+(defun hlcomment-update (&optional b e l)
+  (let ((overlays (overlays-in (point-min) (point-max))))
+    (while overlays
+      (let ((overlay (car overlays)))
+        (when (overlay-get overlay 'for-comments)
+          (delete-overlay overlay)))
+      (setq overlays (cdr overlays)))
+    (hlcomment-all)))
+
+(defun hlcomment-enable ()
+  (add-hook 'after-change-functions 'hlcomment-update nil t)
+  (hlcomment-all))
 
 
 ;;;-----------------------------------------------------------------------------
@@ -86,6 +125,9 @@ Usage: (package-require 'package)"
   (try-let 1)
   (with-resource 'defun)
   (fact 1))
+
+;; Have highlighted comment blocks.
+(add-hook 'clojure-mode-hook 'hlcomment-enable)
 
 
 ;;;-----------------------------------------------------------------------------
@@ -240,7 +282,7 @@ Usage: (package-require 'package)"
 (ido-mode t)
 
 ;; Wrap words instread of breaking them.
-(global-visual-line-mode t)
+(toggle-word-wrap t)
 
 ;; Show matching paren.
 (show-paren-mode t)
@@ -306,7 +348,7 @@ Usage: (package-require 'package)"
 
 ;; Have the home and end key behave as they should within emacs, i.e. move to
 ;; the beginning or end of the line, respectively.
-(define-key global-map [home] 'beginning-of-line)
+(define-key global-map [home] 'move-beginning-of-line)
 (define-key global-map [end] 'end-of-line)
 
 ;; Have Paredit enabled while in emacs-lisp mode.
@@ -327,7 +369,16 @@ Usage: (package-require 'package)"
 
 ;; Have a key for loading the init file quickly.
 (global-set-key (kbd "C-c i")
-                (lambda () (interactive) (find-file "~/.emacs.d/init.el")))
+                (lambda () (interactive) (find-file-other-window "~/.emacs.d/init.el")))
+
+;; Have too long lines highlighted.
+(require 'whitespace)
+(setq whitespace-line-column 100)
+(setq whitespace-style '(face lines-tail))
+(add-hook 'prog-mode-hook 'whitespace-mode)
+
+;; Have highlighted comment blocks in emacs-lisp.
+(add-hook 'emacs-lisp-mode-hook 'hlcomment-enable)
 
 
 ;;;-----------------------------------------------------------------------------
@@ -351,3 +402,4 @@ Usage: (package-require 'package)"
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  )
+(put 'dired-find-alternate-file 'disabled nil)
