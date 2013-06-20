@@ -63,38 +63,69 @@ Usage: (package-require 'package)"
 ;;; Highlight top-level comment blocks in lisps
 ;;;-----------------------------------------------------------------------------
 
+(require 'cl)
+
+(defun overlays-with-property-in (begin end property &optional value)
+  "Return the overlays that overlap with the region begin to end, having a the
+specified property. A fourth, optional, argument is the expected value of that
+property. Note that an overlay from 1 to 3 is only found when the range
+begin-end covers 2 (the behaviour of the standard overlays-in function)."
+  (let ((overlays (overlays-in begin end)))
+    (cl-remove-if-not (lambda (overlay)
+                        (let ((propvalue (overlay-get overlay property)))
+                          (and propvalue
+                               (or (not value) (equal value propvalue)))))
+                      overlays)))
+
 (defface hl-comment-block-face
   '((t (:background "burlywood2" :foreground "burlywood4")))
   "Face for comment overlay blocks.")
 
-(defun hl-comment-block ()
-  (when (re-search-forward "^;;;" nil t)
-    (let ((start (- (point) 3)))
-      (end-of-line)
-      (let* ((end (+ (point) 1))
-             (overlay (make-overlay start end)))
-        (overlay-put overlay 'face 'hl-comment-block-face)
-        (overlay-put overlay 'evaporate t)
-        (overlay-put overlay 'priority 999)
-        (overlay-put overlay 'for-comments t)))))
+(defun hl-comment-block (end)
+  "Searches for the first occurrence of a toplevel ;;; comment, starting from
+point. If no occurrence is found, nil is returned. Otherwise, a highlighting
+overlay is added to the comment line if it does not have one already. A non-nil
+value is returned in this case."
+  (when (re-search-forward "^;;;" end t)
+    (if (not (overlays-with-property-in (point) (point) 'for-comments))
+        (let ((start (- (point) 3)))
+          (end-of-line)
+          (let* ((end (+ (point) 1))
+                 (overlay (make-overlay start end)))
+            (overlay-put overlay 'face 'hl-comment-block-face)
+            (overlay-put overlay 'evaporate t)
+            (overlay-put overlay 'priority 999)
+            (overlay-put overlay 'for-comments t))
+          (goto-char (+ start 3)))
+      t)))
 
 (defun hl-comment-block-all ()
+  "Executes hl-comment-block, starting from the beginning of the buffer, as
+long as that function returns truthfully."
   (let ((current-point (point)))
     (goto-char 1)
-    (while (hl-comment-block))
+    (while (hl-comment-block (point-max)))
     (goto-char current-point)))
 
-(defun hl-comment-block-update (&optional b e l)
-  (let ((overlays (overlays-in (point-min) (point-max))))
-    (while overlays
-      (let ((overlay (car overlays)))
-        (when (overlay-get overlay 'for-comments)
-          (delete-overlay overlay)))
-      (setq overlays (cdr overlays)))
-    (hl-comment-block-all)))
+(defun hl-comment-block-before-change (begin end)
+  "Removes comment highlighting overlays in the region that is about to change."
+  ;; (message "before change region: begin=%d, end=%d" begin end)
+  (mapc 'delete-overlay (overlays-with-property-in begin end 'for-comments)))
+
+(defun hl-comment-block-after-change (begin end lenght)
+  "Executes hl-comment-block, starting from the beginning of the line of
+the beginning of the changed region."
+  ;; (message "after change region: begin=%d, end=%d" begin end)
+  (let ((current-point (point)))
+    (goto-char begin)
+    (beginning-of-line)
+    (while (hl-comment-block (+ end 3)))
+    (goto-char current-point)))
 
 (defun hl-comment-block-enable ()
-  (add-hook 'after-change-functions 'hl-comment-block-update nil t)
+  "Enable highlighting top-level comment blocks."
+  (add-hook 'before-change-functions 'hl-comment-block-before-change nil t)
+  (add-hook 'after-change-functions 'hl-comment-block-after-change nil t)
   (hl-comment-block-all))
 
 
@@ -379,6 +410,9 @@ Usage: (package-require 'package)"
 
 ;; Have highlighted comment blocks in emacs-lisp.
 (add-hook 'emacs-lisp-mode-hook 'hl-comment-block-enable)
+
+;; Have documentation in emacs-lisp.
+(add-hook 'emacs-lisp-mode-hook 'eldoc-mode)
 
 
 ;;;-----------------------------------------------------------------------------
