@@ -90,7 +90,7 @@ value is returned in this case."
     (if (not (overlays-with-property-in (point) (point) 'for-comments))
         (let ((start (- (point) 3)))
           (end-of-line)
-          (let* ((end (+ (point) 1))
+          (let* ((end (+1 (point)))
                  (overlay (make-overlay start end)))
             (overlay-put overlay 'face 'hl-comment-block-face)
             (overlay-put overlay 'evaporate t)
@@ -98,14 +98,6 @@ value is returned in this case."
             (overlay-put overlay 'for-comments t))
           (goto-char (+ start 3)))
       t)))
-
-(defun hl-comment-block-all ()
-  "Executes hl-comment-block, starting from the beginning of the buffer, as
-long as that function returns truthfully."
-  (let ((current-point (point)))
-    (goto-char 1)
-    (while (hl-comment-block (point-max)))
-    (goto-char current-point)))
 
 (defun hl-comment-block-before-change (begin end)
   "Removes comment highlighting overlays in the region that is about to change."
@@ -116,17 +108,16 @@ long as that function returns truthfully."
   "Executes hl-comment-block, starting from the beginning of the line of
 the beginning of the changed region."
   ;; (message "after change region: begin=%d, end=%d" begin end)
-  (let ((current-point (point)))
+  (save-excursion
     (goto-char begin)
     (beginning-of-line)
-    (while (hl-comment-block (+ end 3)))
-    (goto-char current-point)))
+    (while (hl-comment-block (+ end 3)))))
 
 (defun hl-comment-block-enable ()
   "Enable highlighting top-level comment blocks."
   (add-hook 'before-change-functions 'hl-comment-block-before-change nil t)
   (add-hook 'after-change-functions 'hl-comment-block-after-change nil t)
-  (hl-comment-block-all))
+  (save-excursion (while (hl-comment-block (point-max)))))
 
 
 ;;;-----------------------------------------------------------------------------
