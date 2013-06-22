@@ -330,6 +330,12 @@ Usage: (package-require 'package)"
                 (lambda () (interactive)
                   (find-file-other-window "~/.emacs.d/init.el")))
 
+;; Have window numbers for faster switching.
+(autoload 'window-number-mode "window-number" t)
+(autoload 'window-number-meta-mode "window-number" t)
+(window-number-mode t)
+(window-number-meta-mode t)
+
 
 ;;;-----------------------------------------------------------------------------
 ;;; Emacs automagically managed settings. Don't touch :)
