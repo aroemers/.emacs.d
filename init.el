@@ -44,7 +44,7 @@ Usage: (package-require 'package)"
 
 ;; Load the solarized package and activate it.
 (package-require 'color-theme-solarized)
-(load-theme 'solarized-dark t)
+(load-theme 'solarized-light t)
 
 ;; Set the color of the modeline (statusbar).
 (set-face-background 'mode-line "#ddddee") ; the text color.
@@ -57,6 +57,67 @@ Usage: (package-require 'package)"
 (if (fboundp 'menu-bar-mode) (menu-bar-mode -1))
 (when window-system
   (set-frame-size (selected-frame) 180 60))
+
+
+;;;-----------------------------------------------------------------------------
+;;; Highlight top-level comment blocks in lisps
+;;;-----------------------------------------------------------------------------
+
+(require 'cl)
+
+(defun overlays-with-property-in (begin end property &optional value)
+  "Return the overlays that overlap with the region begin to end, having a the
+specified property. A fourth, optional, argument is the expected value of that
+property. Note that an overlay from 1 to 3 is only found when the range
+begin-end covers 2 (the behaviour of the standard overlays-in function)."
+  (let ((overlays (overlays-in begin end)))
+    (cl-remove-if-not (lambda (overlay)
+                        (let ((propvalue (overlay-get overlay property)))
+                          (and propvalue
+                               (or (not value) (equal value propvalue)))))
+                      overlays)))
+
+(defface hl-comment-block-face
+  '((t (:background "burlywood2" :foreground "burlywood4")))
+  "Face for comment overlay blocks.")
+
+(defun hl-comment-block (end)
+  "Searches for the first occurrence of a toplevel ;;; comment, starting from
+point. If no occurrence is found, nil is returned. Otherwise, a highlighting
+overlay is added to the comment line if it does not have one already. A non-nil
+value is returned in this case."
+  (when (re-search-forward "^;;;" end t)
+    (if (not (overlays-with-property-in (point) (point) 'for-comments))
+        (let ((start (- (point) 3)))
+          (end-of-line)
+          (let* ((end (+1 (point)))
+                 (overlay (make-overlay start end)))
+            (overlay-put overlay 'face 'hl-comment-block-face)
+            (overlay-put overlay 'evaporate t)
+            (overlay-put overlay 'priority 999)
+            (overlay-put overlay 'for-comments t))
+          (goto-char (+ start 3)))
+      t)))
+
+(defun hl-comment-block-before-change (begin end)
+  "Removes comment highlighting overlays in the region that is about to change."
+  ;; (message "before change region: begin=%d, end=%d" begin end)
+  (mapc 'delete-overlay (overlays-with-property-in begin end 'for-comments)))
+
+(defun hl-comment-block-after-change (begin end lenght)
+  "Executes hl-comment-block, starting from the beginning of the line of
+the beginning of the changed region."
+  ;; (message "after change region: begin=%d, end=%d" begin end)
+  (save-excursion
+    (goto-char begin)
+    (beginning-of-line)
+    (while (hl-comment-block (+ end 3)))))
+
+(defun hl-comment-block-enable ()
+  "Enable highlighting top-level comment blocks."
+  (add-hook 'before-change-functions 'hl-comment-block-before-change nil t)
+  (add-hook 'after-change-functions 'hl-comment-block-after-change nil t)
+  (save-excursion (while (hl-comment-block (point-max)))))
 
 
 ;;;-----------------------------------------------------------------------------
@@ -86,6 +147,9 @@ Usage: (package-require 'package)"
   (try-let 1)
   (with-resource 'defun)
   (fact 1))
+
+;; Have highlighted comment blocks.
+(add-hook 'clojure-mode-hook 'hl-comment-block-enable)
 
 
 ;;;-----------------------------------------------------------------------------
@@ -240,7 +304,7 @@ Usage: (package-require 'package)"
 (ido-mode t)
 
 ;; Wrap words instread of breaking them.
-(global-visual-line-mode t)
+(toggle-word-wrap t)
 
 ;; Show matching paren.
 (show-paren-mode t)
@@ -306,7 +370,7 @@ Usage: (package-require 'package)"
 
 ;; Have the home and end key behave as they should within emacs, i.e. move to
 ;; the beginning or end of the line, respectively.
-(define-key global-map [home] 'beginning-of-line)
+(define-key global-map [home] 'move-beginning-of-line)
 (define-key global-map [end] 'end-of-line)
 
 ;; Have Paredit enabled while in emacs-lisp mode.
@@ -327,8 +391,19 @@ Usage: (package-require 'package)"
 
 ;; Have a key for loading the init file quickly.
 (global-set-key (kbd "C-c i")
-                (lambda () (interactive)
-                  (find-file-other-window "~/.emacs.d/init.el")))
+                (lambda () (interactive) (find-file-other-window "~/.emacs.d/init.el")))
+
+;; Have too long lines highlighted.
+(require 'whitespace)
+(setq whitespace-line-column 100)
+(setq whitespace-style '(face lines-tail))
+(add-hook 'prog-mode-hook 'whitespace-mode)
+
+;; Have highlighted comment blocks in emacs-lisp.
+(add-hook 'emacs-lisp-mode-hook 'hl-comment-block-enable)
+
+;; Have documentation in emacs-lisp.
+(add-hook 'emacs-lisp-mode-hook 'eldoc-mode)
 
 ;; Have window numbers for faster switching.
 (autoload 'window-number-mode "window-number" t)
@@ -358,3 +433,4 @@ Usage: (package-require 'package)"
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  )
+(put 'dired-find-alternate-file 'disabled nil)
