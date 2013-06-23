@@ -90,7 +90,7 @@ value is returned in this case."
     (if (not (overlays-with-property-in (point) (point) 'for-comments))
         (let ((start (- (point) 3)))
           (end-of-line)
-          (let* ((end (+1 (point)))
+          (let* ((end (+ 1 (point)))
                  (overlay (make-overlay start end)))
             (overlay-put overlay 'face 'hl-comment-block-face)
             (overlay-put overlay 'evaporate t)
@@ -406,6 +406,7 @@ the beginning of the changed region."
 (add-hook 'emacs-lisp-mode-hook 'eldoc-mode)
 
 ;; Have window numbers for faster switching.
+(package-require 'window-number)
 (autoload 'window-number-mode "window-number" t)
 (autoload 'window-number-meta-mode "window-number" t)
 (window-number-mode t)
