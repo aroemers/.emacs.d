@@ -117,7 +117,9 @@ the beginning of the changed region."
   "Enable highlighting top-level comment blocks."
   (add-hook 'before-change-functions 'hl-comment-block-before-change nil t)
   (add-hook 'after-change-functions 'hl-comment-block-after-change nil t)
-  (save-excursion (while (hl-comment-block (point-max)))))
+  (save-excursion
+    (goto-char (point-min))
+    (while (hl-comment-block (point-max)))))
 
 
 ;;;-----------------------------------------------------------------------------
