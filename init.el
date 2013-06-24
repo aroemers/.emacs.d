@@ -104,7 +104,7 @@ value is returned in this case."
   ;; (message "before change region: begin=%d, end=%d" begin end)
   (mapc 'delete-overlay (overlays-with-property-in begin end 'for-comments)))
 
-(defun hl-comment-block-after-change (begin end lenght)
+(defun hl-comment-block-after-change (begin end length)
   "Executes hl-comment-block, starting from the beginning of the line of
 the beginning of the changed region."
   ;; (message "after change region: begin=%d, end=%d" begin end)
