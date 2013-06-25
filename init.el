@@ -148,7 +148,8 @@ the beginning of the changed region."
 (define-clojure-indent
   (try-let 1)
   (with-resource 'defun)
-  (fact 1))
+  (fact 1)
+  (guard-let 1))
 
 ;; Have highlighted comment blocks.
 (add-hook 'clojure-mode-hook 'hl-comment-block-enable)
