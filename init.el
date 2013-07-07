@@ -78,7 +78,8 @@ begin-end covers 2 (the behaviour of the standard overlays-in function)."
                       overlays)))
 
 (defface hl-comment-block-face
-  '((t (:background "burlywood2" :foreground "burlywood4")))
+  '((((background light)) (:background "burlywood2" :foreground "burlywood4"))
+    (((background dark)) (:background "#003344" :foreground "#aaaa22")))
   "Face for comment overlay blocks.")
 
 (defun hl-comment-block (end)
