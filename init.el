@@ -1,12 +1,4 @@
 ;;;-----------------------------------------------------------------------------
-;;; Todo items
-;;;-----------------------------------------------------------------------------
-
-;; * Automatically open a new comment line when pressing RET while on a comment
-;;   line.
-
-
-;;;-----------------------------------------------------------------------------
 ;;; Convenient package handling in emacs
 ;;;-----------------------------------------------------------------------------
 
@@ -18,20 +10,21 @@
 ;; Make sure a package is installed
 (defun package-require (package)
   "Install a package unless it is already installed
-or a feature with the same name is already active.
+   or a feature with the same name is already active.
 
-Usage: (package-require 'package)"
-  ; try to activate the package with at least version 0.
+   Usage: (package-require 'package)"
+  ;; Try to activate the package with at least version 0.
   (package-activate package '(0))
-  ; try to just require the package. Maybe the user has it in his local config
+  ;; Try to just require the package. Maybe the user has it in his local config.
   (condition-case nil
       (require package)
-    ; if we cannot require it, it does not exist, yet. So install it.
+    ;; If we cannot require it, it does not exist, yet. So install it.
     (error (when (not (package-installed-p package))
              (package-install package)))))
 
 ;; Initialize installed packages
 (package-initialize)
+
 ;; Package init not needed, since it is done anyway in emacs 24 after reading
 ;; the init but we have to load the list of available packages
 (when (not package-archive-contents)
@@ -43,8 +36,8 @@ Usage: (package-require 'package)"
 ;;;-----------------------------------------------------------------------------
 
 ;; Load the solarized package and activate it.
-(package-require 'color-theme-solarized)
-(load-theme 'solarized-light t)
+(package-require 'molokai-theme)
+(load-theme 'molokai t)
 
 ;; Set the color of the modeline (statusbar).
 (set-face-background 'mode-line "#ddddee") ; the text color.
@@ -56,7 +49,7 @@ Usage: (package-require 'package)"
 (if (fboundp 'tool-bar-mode) (tool-bar-mode -1))
 (if (fboundp 'menu-bar-mode) (menu-bar-mode -1))
 (when window-system
-  (set-frame-size (selected-frame) 180 60))
+  (set-frame-size (selected-frame) 220 60))
 
 
 ;;;-----------------------------------------------------------------------------
@@ -67,9 +60,9 @@ Usage: (package-require 'package)"
 
 (defun overlays-with-property-in (begin end property &optional value)
   "Return the overlays that overlap with the region begin to end, having a the
-specified property. A fourth, optional, argument is the expected value of that
-property. Note that an overlay from 1 to 3 is only found when the range
-begin-end covers 2 (the behaviour of the standard overlays-in function)."
+  specified property. A fourth, optional, argument is the expected value of that
+  property. Note that an overlay from 1 to 3 is only found when the range
+  begin-end covers 2 (the behaviour of the standard overlays-in function)."
   (let ((overlays (overlays-in begin end)))
     (cl-remove-if-not (lambda (overlay)
                         (let ((propvalue (overlay-get overlay property)))
@@ -79,14 +72,14 @@ begin-end covers 2 (the behaviour of the standard overlays-in function)."
 
 (defface hl-comment-block-face
   '((((background light)) (:background "burlywood2" :foreground "burlywood4"))
-    (((background dark)) (:background "#003344" :foreground "#aaaa22")))
+    (((background dark)) (:background "#222628" :foreground "#cccc77")))
   "Face for comment overlay blocks.")
 
 (defun hl-comment-block (end)
   "Searches for the first occurrence of a toplevel ;;; comment, starting from
-point. If no occurrence is found, nil is returned. Otherwise, a highlighting
-overlay is added to the comment line if it does not have one already. A non-nil
-value is returned in this case."
+  point. If no occurrence is found, nil is returned. Otherwise, a highlighting
+  overlay is added to the comment line if it does not have one already. A non-nil
+  value is returned in this case."
   (when (re-search-forward "^;;;" end t)
     (if (not (overlays-with-property-in (point) (point) 'for-comments))
         (let ((start (- (point) 3)))
@@ -102,13 +95,11 @@ value is returned in this case."
 
 (defun hl-comment-block-before-change (begin end)
   "Removes comment highlighting overlays in the region that is about to change."
-  ;; (message "before change region: begin=%d, end=%d" begin end)
   (mapc 'delete-overlay (overlays-with-property-in begin end 'for-comments)))
 
 (defun hl-comment-block-after-change (begin end length)
   "Executes hl-comment-block, starting from the beginning of the line of
-the beginning of the changed region."
-  ;; (message "after change region: begin=%d, end=%d" begin end)
+  the beginning of the changed region."
   (save-excursion
     (goto-char begin)
     (beginning-of-line)
@@ -157,15 +148,40 @@ the beginning of the changed region."
 ;; Have highlighted comment blocks.
 (add-hook 'clojure-mode-hook 'hl-comment-block-enable)
 
+;; Hack for displaying ansi colors correctly for all response handlers in the
+;; nrepl buffer. Remove when fixed in later version of nrepl.el.
+;; From https://github.com/kingtim/nrepl.el/pull/275.
+(defun nrepl-emit-output (buffer string &optional bol)
+  "Using BUFFER, emit STRING.
+  If BOL is non-nil, emit at the beginning of the line."
+  (with-current-buffer buffer
+    (nrepl-emit-output-at-pos buffer string nrepl-input-start-mark bol)
+    (ansi-color-apply-on-region (marker-position nrepl-output-start) (point-max))))
+
 
 ;;;-----------------------------------------------------------------------------
 ;;; Scala mode
 ;;;-----------------------------------------------------------------------------
 
 ;; Require the needed packages and make sure it is active when a Scala file is
-;; loaded. Note that there is also a Scala-mode2, which can check out some day.
+;; loaded. Note that there is also a Scala-mode2, which I must check out some day.
 (package-require 'scala-mode)
 (require 'scala-mode-auto)
+
+
+;;;-----------------------------------------------------------------------------
+;;; Emacs Lisp mode
+;;;-----------------------------------------------------------------------------
+
+;; Have Paredit enabled while in emacs-lisp mode.
+(package-require 'paredit)
+(add-hook 'emacs-lisp-mode-hook 'paredit-mode)
+
+;; Have highlighted comment blocks in emacs-lisp.
+(add-hook 'emacs-lisp-mode-hook 'hl-comment-block-enable)
+
+;; Have documentation in emacs-lisp.
+(add-hook 'emacs-lisp-mode-hook 'eldoc-mode)
 
 
 ;;;-----------------------------------------------------------------------------
@@ -197,9 +213,6 @@ the beginning of the changed region."
 
 ;; Map auto-complete to M-TAB, to use if it does not pop up automatically.
 (define-key ac-mode-map (kbd "M-TAB") 'auto-complete)
-
-;; Have auto-completion using the nrepl session.
-(package-require 'ac-nrepl)
 
 
 ;;;-----------------------------------------------------------------------------
@@ -253,9 +266,6 @@ the beginning of the changed region."
 ;;; Other niceties
 ;;;-----------------------------------------------------------------------------
 
-;; Add my own write mode.
-(load-file "~/.emacs.d/write-mode.el")
-
 ;; Browse through the undo tree, using C-x u
 (package-require 'undo-tree)
 (global-undo-tree-mode)
@@ -289,12 +299,6 @@ the beginning of the changed region."
 (global-set-key (kbd "M-x") 'smex)
 (global-set-key (kbd "M-X") 'smex-major-mode-commands)
 
-;; Have a small amount of time to press o after C-x o to switch quickly to the
-;; next window. Only active when having 3 or more windows.
-(package-require 'win-switch)
-(global-set-key (kbd "C-x o") 'win-switch-dispatch)
-(global-set-key (kbd "M-o") 'win-switch-dispatch)
-
 ;; Go straight to the *scratch* buffer, i.e. skip the help message. And set a
 ;; nice welcoming message.
 (setq inhibit-startup-screen t)
@@ -315,21 +319,13 @@ the beginning of the changed region."
 ;; Show matching paren.
 (show-paren-mode t)
 
-;; Go to the last change, using M-.
-;; M-. can conflict with etags, but I don't use that feature.
+;; Go to the last change, using M-l.
 (package-require 'goto-chg)
-(global-set-key (kbd "M-.") 'goto-last-change)
+(global-set-key (kbd "M-l") 'goto-last-change)
 
 ;; Save backups and autosaves in the system's temporary directory.
 (setq backup-directory-alist `((".*" . ,temporary-file-directory)))
 (setq auto-save-file-name-transforms `((".*" ,temporary-file-directory t)))
-
-;; Hilight the current line.
-(global-hl-line-mode t)
-
-;; Self-inflicted masochism.
-;(package-require 'guru-mode)
-;(guru-global-mode t)
 
 ;; Switch back to previous buffer, with C-c b.
 (defun switch-to-previous-buffer ()
@@ -344,11 +340,12 @@ the beginning of the changed region."
 (package-require 'projectile)
 (projectile-global-mode t)
 
-;; Integrate with the system's clipboard, does not seem to work in the
-;; terminal on OS X Mountain Lion, while it does work in a terminal on
-;; OS X Lion.
-(package-require 'simpleclip)
-(simpleclip-mode t)
+;; Integrate with the system's clipboard when in a terminal. Does not seem to
+;; work in the terminal on OS X Mountain Lion, while it does work in a terminal
+;; on OS X Lion.
+(when (not window-system)
+  (package-require 'simpleclip)
+  (simpleclip-mode t))
 
 ;; Automatic indention on RET and yanks, and only one space on forward-kills.
 (package-require 'auto-indent-mode)
@@ -379,21 +376,12 @@ the beginning of the changed region."
 (define-key global-map [home] 'move-beginning-of-line)
 (define-key global-map [end] 'end-of-line)
 
-;; Have Paredit enabled while in emacs-lisp mode.
-(add-hook 'emacs-lisp-mode-hook 'paredit-mode)
-
 ;; Open the current file as root.
 (defun current-as-root ()
   "Reopen current file as root"
   (interactive)
   (set-visited-file-name (concat "/sudo::" (buffer-file-name)))
   (setq buffer-read-only nil))
-
-;; Disable the command key on OS X. This does imply that simpleclip functions
-;; need to be called with M-x. Unfortunately, this also means Command-V (paste)
-;; does not work either when in a window-system.
-;(when (eq system-type 'darwin)
-;  (setq mac-command-modifier nil))
 
 ;; Have a key for loading the init file quickly.
 (global-set-key (kbd "C-c i")
@@ -405,18 +393,15 @@ the beginning of the changed region."
 (setq whitespace-style '(face lines-tail))
 (add-hook 'prog-mode-hook 'whitespace-mode)
 
-;; Have highlighted comment blocks in emacs-lisp.
-(add-hook 'emacs-lisp-mode-hook 'hl-comment-block-enable)
-
-;; Have documentation in emacs-lisp.
-(add-hook 'emacs-lisp-mode-hook 'eldoc-mode)
-
 ;; Have window numbers for faster switching.
 (package-require 'window-number)
 (autoload 'window-number-mode "window-number" t)
 (autoload 'window-number-meta-mode "window-number" t)
 (window-number-mode t)
 (window-number-meta-mode t)
+
+;; Bind M-o to what C-x o is bound to.
+(global-set-key (kbd "M-o") (key-binding (kbd "C-x o")))
 
 
 ;;;-----------------------------------------------------------------------------
@@ -428,16 +413,10 @@ the beginning of the changed region."
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(ansi-color-names-vector ["#262626" "#d70000" "#5f8700" "#af8700" "#0087ff" "#af005f" "#00afaf" "#626262"])
- '(background-color "#1c1c1c")
- '(background-mode dark)
- '(cursor-color "#808080")
- '(custom-safe-themes (quote ("60a2ebd7effefeb960f61bc4772afd8b1ae4ea48fae4d732864ab9647c92093a" "628278136f88aa1a151bb2d6c8a86bf2b7631fbea5f0f76cba2a0079cd910f7d" "82d2cac368ccdec2fcc7573f24c3f79654b78bf133096f9b40c20d97ec1d8016" "06f0b439b62164c6f8f84fdda32b62fb50b6d00e8b01c2208e55543a6337433a" "bb08c73af94ee74453c90422485b29e5643b73b05e8de029a6909af6a3fb3f58" "1e7e097ec8cb1f8c3a912d7e1e0331caeed49fef6cff220be63bd2a6ba4cc365" "fc5fcb6f1f1c1bc01305694c59a1a861b008c534cae8d0e48e4d5e81ad718bc6" default)))
- '(foreground-color "#808080"))
+ )
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- )
-(put 'dired-find-alternate-file 'disabled nil)
+ '(cursor ((t (:background "chartreuse1")))))
