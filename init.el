@@ -251,10 +251,10 @@
 ;; Auto-connect when a password is given.
 (defun irc-maybe ()
   "Connect to IRC, when a password is given."
-  (let ((p (read-passwd "Give password to connect to IRC: ")))
+  (let ((p (read-passwd "Give password to connect to FreeBNC IRC: ")))
     (when (> (length p) 0)
       (erc-tls :server "ie.freebnc.net" :port 6697
-               :nick "aroemers" :password p))))
+               :nick "aroemers" :password (concat "aroemers:" p)))))
 
 ;; Ask to auto-connect on startup.
 (add-hook 'emacs-startup-hook 'irc-maybe)
