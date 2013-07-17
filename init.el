@@ -366,6 +366,15 @@
 ;; Use git from within emacs.
 (package-require 'magit)
 
+;; Change magit diff colors.
+(eval-after-load 'magit
+  '(progn
+     (set-face-foreground 'magit-diff-add "green3")
+     (set-face-foreground 'magit-diff-del "red3")
+     (set-face-background 'magit-item-highlight "#131315")))
+
+
+
 ;; Have emacs reload buffers from the disk when changed. Currently, it does not
 ;; warn when the buffer is modified _and_ the the file on disk has been
 ;; modified. Also, watch out for lots of traffic when opening files via a
