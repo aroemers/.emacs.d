@@ -39,9 +39,10 @@
 (package-require 'molokai-theme)
 (load-theme 'molokai t)
 
-;; Set the color of the modeline (statusbar).
+;; Set the color of some other parts of Emacs.
 (set-face-background 'mode-line "#ddddee") ; the text color.
 (set-face-foreground 'mode-line "#337744") ; the bar color.
+(set-face-background 'cursor "chartreuse1")
 
 ;; Disable the menubar, toolbar, scrollbars and set a decent size for the window
 ;; when using the window system.
@@ -407,16 +408,3 @@
 ;;;-----------------------------------------------------------------------------
 ;;; Emacs automagically managed settings. Don't touch :)
 ;;;-----------------------------------------------------------------------------
-
-(custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- )
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(cursor ((t (:background "chartreuse1")))))
