@@ -242,8 +242,9 @@
 ;;; IRC related
 ;;;-----------------------------------------------------------------------------
 
-;; Ignore joins and leaves in IRC.
+;; Set some options for ERC.
 (setq erc-hide-list '("JOIN" "PART" "QUIT" "NICK"))
+(setq erc-server-reconnect-timeout 60)
 
 ;; Scroll down to the bottom automatically.
 (add-hook 'erc-mode-hook 'erc-scrolltobottom-mode)
