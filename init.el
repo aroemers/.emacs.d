@@ -50,7 +50,9 @@
 (if (fboundp 'tool-bar-mode) (tool-bar-mode -1))
 (if (fboundp 'menu-bar-mode) (menu-bar-mode -1))
 (when window-system
-  (set-frame-size (selected-frame) 220 60))
+  (set-frame-size (selected-frame) 200 56)
+  (when (eq system-type 'darwin)
+    (set-face-attribute 'default nil :height 130)))
 
 
 ;;;-----------------------------------------------------------------------------
@@ -119,7 +121,7 @@
 ;;; Clojure and nrepl modes
 ;;;-----------------------------------------------------------------------------
 
-;; Require the needed packages.
+;; Require the Clojure packages.
 (package-require 'clojure-mode)
 (package-require 'nrepl)
 (package-require 'nrepl-ritz)
@@ -135,7 +137,11 @@
   (fact 1)
   (facts 1)
   (guard-let 1)
-  (cond-let 1))
+  (cond-let 1)
+  (asserts 1)
+  (if-let* 1)
+  (when-let* 1)
+  (forcat 1))
 
 ;; Have highlighted comment blocks.
 (add-hook 'clojure-mode-hook 'hl-comment-block-enable)
@@ -409,3 +415,16 @@
 ;;;-----------------------------------------------------------------------------
 ;;; Emacs automagically managed settings. Don't touch :)
 ;;;-----------------------------------------------------------------------------
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(magit-git-editor "/Applications/Emacs.app/Contents/MacOS/bin/emacsclient")
+ '(org-capture-templates (quote (("o" "Add item in Online Touch inbox." item (file+headline "~/onlinetouch/ottododone.org" "Inbox") "")))))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ )
