@@ -261,6 +261,19 @@
 (package-require 'erc-hl-nicks)
 
 
+;;;----------------------------------------------------------------------------
+;;; Org Mode related
+;;;----------------------------------------------------------------------------
+
+;; Add capture template for Online Touch.
+(add-to-list 'org-capture-templates
+             '("o" "Add item in Online Touch inbox." item
+               (file+headline "~/onlinetouch/ottododone.org" "Inbox") ""))
+
+;; Have a shortcut key for org-capture.
+(global-set-key (kbd "C-c o") 'org-capture)
+
+
 ;;;-----------------------------------------------------------------------------
 ;;; Other niceties
 ;;;-----------------------------------------------------------------------------
@@ -413,18 +426,5 @@
 
 
 ;;;-----------------------------------------------------------------------------
-;;; Emacs automagically managed settings. Don't touch :)
+;;; Emacs automagically managed settings. Clean up once in a while.
 ;;;-----------------------------------------------------------------------------
-(custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(magit-git-editor "/Applications/Emacs.app/Contents/MacOS/bin/emacsclient")
- '(org-capture-templates (quote (("o" "Add item in Online Touch inbox." item (file+headline "~/onlinetouch/ottododone.org" "Inbox") "")))))
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- )
