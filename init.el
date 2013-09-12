@@ -266,9 +266,9 @@
 ;;;----------------------------------------------------------------------------
 
 ;; Add capture template for Online Touch.
-(add-to-list 'org-capture-templates
-             '("o" "Add item in Online Touch inbox." item
-               (file+headline "~/onlinetouch/ottododone.org" "Inbox") ""))
+(setq org-capture-templates
+      '(("o" "Add item in Online Touch inbox." item
+         (file+headline "~/onlinetouch/ottododone.org" "Inbox") "")))
 
 ;; Have a shortcut key for org-capture.
 (global-set-key (kbd "C-c o") 'org-capture)
@@ -424,7 +424,23 @@
 ;; Bind M-o to what C-x o is bound to.
 (global-set-key (kbd "M-o") (key-binding (kbd "C-x o")))
 
+;; Have a MarkDown mode.
+
+(package-require 'markdown-mode)
+
 
 ;;;-----------------------------------------------------------------------------
 ;;; Emacs automagically managed settings. Clean up once in a while.
 ;;;-----------------------------------------------------------------------------
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(magit-emacsclient-executable "/Applications/Emacs.app/Contents/MacOS/bin/emacsclient"))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ )
