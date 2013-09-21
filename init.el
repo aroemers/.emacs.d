@@ -50,7 +50,9 @@
 (if (fboundp 'tool-bar-mode) (tool-bar-mode -1))
 (if (fboundp 'menu-bar-mode) (menu-bar-mode -1))
 (when window-system
-  (set-frame-size (selected-frame) 220 60))
+  (set-frame-size (selected-frame) 200 56)
+  (when (eq system-type 'darwin)
+    (set-face-attribute 'default nil :height 130)))
 
 
 ;;;-----------------------------------------------------------------------------
@@ -119,7 +121,7 @@
 ;;; Clojure and nrepl modes
 ;;;-----------------------------------------------------------------------------
 
-;; Require the needed packages.
+;; Require the Clojure packages.
 (package-require 'clojure-mode)
 (package-require 'nrepl)
 (package-require 'nrepl-ritz)
@@ -135,7 +137,11 @@
   (fact 1)
   (facts 1)
   (guard-let 1)
-  (cond-let 1))
+  (cond-let 1)
+  (asserts 1)
+  (if-let* 1)
+  (when-let* 1)
+  (forcat 1))
 
 ;; Have highlighted comment blocks.
 (add-hook 'clojure-mode-hook 'hl-comment-block-enable)
@@ -253,6 +259,19 @@
 
 ;; Have colorised nick-names.
 (package-require 'erc-hl-nicks)
+
+
+;;;----------------------------------------------------------------------------
+;;; Org Mode related
+;;;----------------------------------------------------------------------------
+
+;; Add capture template for Online Touch.
+(setq org-capture-templates
+      '(("o" "Add item in Online Touch inbox." item
+         (file+headline "~/onlinetouch/ottododone.org" "Inbox") "")))
+
+;; Have a shortcut key for org-capture.
+(global-set-key (kbd "C-c o") 'org-capture)
 
 
 ;;;-----------------------------------------------------------------------------
@@ -405,7 +424,23 @@
 ;; Bind M-o to what C-x o is bound to.
 (global-set-key (kbd "M-o") (key-binding (kbd "C-x o")))
 
+;; Have a MarkDown mode.
+
+(package-require 'markdown-mode)
+
 
 ;;;-----------------------------------------------------------------------------
-;;; Emacs automagically managed settings. Don't touch :)
+;;; Emacs automagically managed settings. Clean up once in a while.
 ;;;-----------------------------------------------------------------------------
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(magit-emacsclient-executable "/Applications/Emacs.app/Contents/MacOS/bin/emacsclient"))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ )
