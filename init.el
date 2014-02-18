@@ -118,13 +118,12 @@
 
 
 ;;;-----------------------------------------------------------------------------
-;;; Clojure and nrepl modes
+;;; Clojure and cider modes
 ;;;-----------------------------------------------------------------------------
 
 ;; Require the Clojure packages.
 (package-require 'clojure-mode)
-(package-require 'nrepl)
-(package-require 'nrepl-ritz)
+(package-require 'cider)
 
 ;; Make sure paredit is active when clojure mode is active.
 (package-require 'paredit)
@@ -141,20 +140,11 @@
   (asserts 1)
   (if-let* 1)
   (when-let* 1)
-  (forcat 1))
+  (forcat 1)
+  (go-loop 1))
 
 ;; Have highlighted comment blocks.
 (add-hook 'clojure-mode-hook 'hl-comment-block-enable)
-
-;; Hack for displaying ansi colors correctly for all response handlers in the
-;; nrepl buffer. Remove when fixed in later version of nrepl.el.
-;; From https://github.com/kingtim/nrepl.el/pull/275.
-(defun nrepl-emit-output (buffer string &optional bol)
-  "Using BUFFER, emit STRING.
-  If BOL is non-nil, emit at the beginning of the line."
-  (with-current-buffer buffer
-    (nrepl-emit-output-at-pos buffer string nrepl-input-start-mark bol)
-    (ansi-color-apply-on-region (marker-position nrepl-output-start) (point-max))))
 
 
 ;;;-----------------------------------------------------------------------------
@@ -362,7 +352,7 @@
 ;; Automatic indention on RET and yanks, and only one space on forward-kills.
 (package-require 'auto-indent-mode)
 (auto-indent-global-mode t)
-(add-to-list 'auto-indent-disabled-modes-list 'nrepl-mode)
+(add-to-list 'auto-indent-disabled-modes-list 'cider-mode)
 (setq auto-indent-blank-lines-on-move nil) ; No indent while moving, it's weird
 
 ;; Have some smoother scrolling when on a window system.
