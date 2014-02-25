@@ -366,6 +366,7 @@
 
 ;; Use git from within emacs.
 (package-require 'magit)
+(global-set-key (kbd "C-x g") 'magit-status)
 
 ;; Change magit diff colors.
 (eval-after-load 'magit
