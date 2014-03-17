@@ -141,7 +141,8 @@
   (if-let* 1)
   (when-let* 1)
   (forcat 1)
-  (go-loop 1))
+  (go-loop 1)
+  (dosync 0))
 
 ;; Have highlighted comment blocks.
 (add-hook 'clojure-mode-hook 'hl-comment-block-enable)
@@ -341,6 +342,7 @@
 ;; Add projectile, e.g. for quickly opening files and searching in files.
 (package-require 'projectile)
 (projectile-global-mode t)
+(setq shell-file-name "/bin/sh") ; in order to make rgrep work
 
 ;; Integrate with the system's clipboard when in a terminal. Does not seem to
 ;; work in the terminal on OS X Mountain Lion, while it does work in a terminal
