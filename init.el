@@ -265,6 +265,38 @@
 (global-set-key (kbd "C-c o") 'org-capture)
 
 
+;;;----------------------------------------------------------------------------
+;;; Ido Mode related
+;;;----------------------------------------------------------------------------
+
+;; Enable ido mode. Remember that C-j uses the current selection in the ido
+;; minibuffer, which comes in handy when selecting a dired directory (M-x dired).
+(ido-mode t)
+(setq ido-enable-flex-matching t)
+(setq ido-everywhere t)
+
+;; Have a better ido-everywhere.
+(package-require 'ido-ubiquitous)
+(ido-ubiquitous-mode t)
+
+;; Align the options vertically.
+(package-require 'ido-vertical-mode)
+(ido-vertical-mode t)
+
+;; Have a better fuzzy matching, and highlight the matching characters.
+(package-require 'flx-ido)
+(flx-ido-mode 1)
+(setq ido-use-faces nil)
+
+;; Have ido like completions for M-x (execute-extended-command).
+;; It also gives a M-X shortcut to only show the commands from the
+;; currend major mode.
+(package-require 'smex)
+(smex-initialize)
+(global-set-key (kbd "M-x") 'smex)
+(global-set-key (kbd "M-X") 'smex-major-mode-commands)
+
+
 ;;;-----------------------------------------------------------------------------
 ;;; Other niceties
 ;;;-----------------------------------------------------------------------------
@@ -294,14 +326,6 @@
 (global-set-key (kbd "M-p") 'mc/mark-previous-like-this)
 (global-set-key (kbd "M-n") 'mc/mark-next-like-this)
 
-;; Have ido like completions for M-x (execute-extended-command).
-;; It also gives a M-X shortcut to only show the commands from the
-;; currend major mode.
-(package-require 'smex)
-(smex-initialize)
-(global-set-key (kbd "M-x") 'smex)
-(global-set-key (kbd "M-X") 'smex-major-mode-commands)
-
 ;; Go straight to the *scratch* buffer, i.e. skip the help message. And set a
 ;; nice welcoming message.
 (setq inhibit-startup-screen t)
@@ -309,12 +333,6 @@
 
 ;; Show column number next to linenumber in the status bar.
 (column-number-mode t)
-
-;; Enable ido mode. Remember that C-j uses the current selection in the ido
-;; minibuffer, which comes in handy when selecting a dired directory (M-x dired).
-(setq ido-enable-flex-matching t)
-(setq ido-everywhere t)
-(ido-mode t)
 
 ;; Wrap words instread of breaking them.
 (toggle-word-wrap t)
