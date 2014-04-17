@@ -279,14 +279,15 @@
 (package-require 'ido-ubiquitous)
 (ido-ubiquitous-mode t)
 
-;; Align the options vertically.
+;; Align the options vertically, and make up-down for options, and left-right
+;; for history.
 (package-require 'ido-vertical-mode)
 (ido-vertical-mode t)
+(setq ido-vertical-define-keys 'C-n-C-p-up-down-left-right)
 
 ;; Have a better fuzzy matching, and highlight the matching characters.
 (package-require 'flx-ido)
 (flx-ido-mode 1)
-(setq ido-use-faces nil)
 
 ;; Have ido like completions for M-x (execute-extended-command).
 ;; It also gives a M-X shortcut to only show the commands from the
@@ -295,6 +296,29 @@
 (smex-initialize)
 (global-set-key (kbd "M-x") 'smex)
 (global-set-key (kbd "M-X") 'smex-major-mode-commands)
+
+;; Set some colors:
+(set-face-foreground 'ido-first-match "#aaff44")
+(set-face-foreground 'ido-only-match "#aaff44")
+(set-face-foreground 'ido-subdir "#e6db74")
+
+
+;;;-----------------------------------------------------------------------------
+;;; Term related settings.
+;;;-----------------------------------------------------------------------------
+
+;; Clear ansi-term buffer with C-x C-v,
+(defun clear-buffer-permenantly ()
+  "Clear whole buffer, contents is not added to the kill ring"
+  (interactive)
+  (delete-region (point-min) (point-max)))
+
+(define-key term-raw-map (kbd "C-x C-v") 'clear-buffer-permenantly)
+
+;; Have utf-8 encoding in terminals.
+(defadvice ansi-term (after advise-ansi-term-coding-system)
+  (set-buffer-process-coding-system 'utf-8-unix 'utf-8-unix))
+(ad-activate 'ansi-term)
 
 
 ;;;-----------------------------------------------------------------------------
