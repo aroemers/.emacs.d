@@ -307,13 +307,13 @@
 ;;; Term related settings.
 ;;;-----------------------------------------------------------------------------
 
-;; Clear ansi-term buffer with C-x C-v,
-(defun clear-buffer-permenantly ()
-  "Clear whole buffer, contents is not added to the kill ring"
-  (interactive)
-  (delete-region (point-min) (point-max)))
-
-(define-key term-raw-map (kbd "C-x C-v") 'clear-buffer-permenantly)
+;; Clear ansi-term buffer with C-c C-b (Clear Buffer),
+(add-hook 'term-mode-hook
+          (lambda ()
+            (define-key term-raw-map (kbd "C-c C-b")
+              (lambda ()
+                (interactive)
+                (term-reset-terminal)))))
 
 ;; Have utf-8 encoding in terminals.
 (defadvice ansi-term (after advise-ansi-term-coding-system)
