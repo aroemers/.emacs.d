@@ -466,6 +466,9 @@
 ;; Have better buffer names for equally named files.
 (require 'uniquify)
 
+;; Have a YAML major mode.
+(package-require 'yaml-mode)
+
 
 ;;;-----------------------------------------------------------------------------
 ;;; Emacs automagically managed settings. Clean up once in a while.
