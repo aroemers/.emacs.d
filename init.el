@@ -142,7 +142,8 @@
   (when-let* 1)
   (forcat 1)
   (go-loop 1)
-  (dosync 0))
+  (dosync 0)
+  (match-form 3))
 
 ;; Have highlighted comment blocks.
 (add-hook 'clojure-mode-hook 'hl-comment-block-enable)
@@ -219,11 +220,12 @@
 ;; before saving.
 (setq-default indent-tabs-mode nil)
 
-(defun untabify-maybe ()
-  (when (not indent-tabs-mode)
-    (untabify (point-min) (point-max))))
+;; Disabled for now, as working on others' files may yield too big diffs.
+;; (defun untabify-maybe ()
+;;   (when (not indent-tabs-mode)
+;;     (untabify (point-min) (point-max))))
 
-(add-hook 'before-save-hook 'untabify-maybe)
+;; (add-hook 'before-save-hook 'untabify-maybe)
 
 
 ;;;-----------------------------------------------------------------------------
@@ -237,13 +239,11 @@
 ;; Scroll down to the bottom automatically.
 (add-hook 'erc-mode-hook 'erc-scrolltobottom-mode)
 
-;; Auto-connect when a password is given.
+;; Auto-connect when 'yes' is given.
 (defun irc-maybe ()
   "Connect to IRC, when a password is given."
-  (let ((p (read-passwd "Give password to connect to FreeBNC IRC: ")))
-    (when (> (length p) 0)
-      (erc-tls :server "par01.freebnc.net" :port 1338
-               :nick "aroemers" :password (concat "aroemers/default:" p)))))
+  (when (y-or-n-p-with-timeout "Connect to IRC?" 5 nil)
+    (erc-tls :server "orwell.freenode.net" :port 7070 :nick "aroemers")))
 
 ;; Ask to auto-connect on startup.
 (add-hook 'emacs-startup-hook 'irc-maybe)
@@ -479,6 +479,7 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(magit-emacsclient-executable "/Applications/Emacs.app/Contents/MacOS/bin/emacsclient")
+ '(markdown-command "/usr/local/bin/markdown")
  '(uniquify-buffer-name-style (quote forward) nil (uniquify)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
