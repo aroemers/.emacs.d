@@ -50,7 +50,7 @@
 (if (fboundp 'tool-bar-mode) (tool-bar-mode -1))
 (if (fboundp 'menu-bar-mode) (menu-bar-mode -1))
 (when window-system
-  (set-frame-size (selected-frame) 200 56)
+  (set-frame-size (selected-frame) 207 66)
   (when (eq system-type 'darwin)
     (set-face-attribute 'default nil :height 130)))
 
@@ -143,10 +143,15 @@
   (forcat 1)
   (go-loop 1)
   (dosync 0)
-  (match-form 3))
+  (match-form 3)
+  (routing 1)
+  (rmap 1))
 
 ;; Have highlighted comment blocks.
 (add-hook 'clojure-mode-hook 'hl-comment-block-enable)
+
+;; Bind fill-paragraph to C-c M-q
+(global-set-key (kbd "C-c M-q") 'fill-paragraph)
 
 
 ;;;-----------------------------------------------------------------------------
@@ -244,7 +249,7 @@
 (defun irc-maybe ()
   "Connect to IRC, when a password is given."
   (when (y-or-n-p-with-timeout "Connect to IRC?" 5 nil)
-    (erc-tls :server "orwell.freenode.net" :port 7070 :nick "aroemers")))
+    (erc-tls :server "irc.freenode.net" :port 7070 :nick "aroemers")))
 
 ;; Ask to auto-connect on startup.
 (add-hook 'emacs-startup-hook 'irc-maybe)
@@ -412,6 +417,7 @@
 ;; Use git from within emacs.
 (package-require 'magit)
 (global-set-key (kbd "C-x g") 'magit-status)
+(setq magit-last-seen-setup-instructions "1.4.0")
 
 ;; Change magit diff colors.
 (eval-after-load 'magit
