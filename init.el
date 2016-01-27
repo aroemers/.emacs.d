@@ -5,7 +5,9 @@
 (require 'package)
 
 ;; Add automatically parsed versiontracking repositories.
-(add-to-list 'package-archives '("melpa" . "http://melpa.milkbox.net/packages/"))
+;(add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/"))
+(add-to-list 'package-archives '("melpa-stable" . "https://stable.melpa.org/packages/") t)
+
 
 ;; Make sure a package is installed
 (defun package-require (package)
@@ -36,12 +38,10 @@
 ;;;-----------------------------------------------------------------------------
 
 ;; Load the solarized package and activate it.
-(package-require 'molokai-theme)
-(load-theme 'molokai t)
+(package-require 'monokai-theme)
+(load-theme 'monokai t)
 
 ;; Set the color of some other parts of Emacs.
-(set-face-background 'mode-line "#ddddee") ; the text color.
-(set-face-foreground 'mode-line "#337744") ; the bar color.
 (set-face-background 'cursor "chartreuse1")
 
 ;; Disable the menubar, toolbar, scrollbars and set a decent size for the window
@@ -50,84 +50,28 @@
 (if (fboundp 'tool-bar-mode) (tool-bar-mode -1))
 (if (fboundp 'menu-bar-mode) (menu-bar-mode -1))
 (when window-system
-  (set-frame-size (selected-frame) 207 66)
+  (set-frame-size (selected-frame) 240 75)
   (when (eq system-type 'darwin)
     (set-face-attribute 'default nil :height 130)))
 
 
 ;;;-----------------------------------------------------------------------------
-;;; Highlight top-level comment blocks in lisps
+;;; Clojure related
 ;;;-----------------------------------------------------------------------------
 
-(require 'cl)
-
-(defun overlays-with-property-in (begin end property &optional value)
-  "Return the overlays that overlap with the region begin to end, having a the
-  specified property. A fourth, optional, argument is the expected value of that
-  property. Note that an overlay from 1 to 3 is only found when the range
-  begin-end covers 2 (the behaviour of the standard overlays-in function)."
-  (let ((overlays (overlays-in begin end)))
-    (cl-remove-if-not (lambda (overlay)
-                        (let ((propvalue (overlay-get overlay property)))
-                          (and propvalue
-                               (or (not value) (equal value propvalue)))))
-                      overlays)))
-
-(defface hl-comment-block-face
-  '((((background light)) (:background "burlywood2" :foreground "burlywood4"))
-    (((background dark)) (:background "#222628" :foreground "#cccc77")))
-  "Face for comment overlay blocks.")
-
-(defun hl-comment-block (end)
-  "Searches for the first occurrence of a toplevel ;;; comment, starting from
-  point. If no occurrence is found, nil is returned. Otherwise, a highlighting
-  overlay is added to the comment line if it does not have one already. A non-nil
-  value is returned in this case."
-  (when (re-search-forward "^;;;" end t)
-    (if (not (overlays-with-property-in (point) (point) 'for-comments))
-        (let ((start (- (point) 3)))
-          (end-of-line)
-          (let* ((end (+ 1 (point)))
-                 (overlay (make-overlay start end)))
-            (overlay-put overlay 'face 'hl-comment-block-face)
-            (overlay-put overlay 'evaporate t)
-            (overlay-put overlay 'priority 999)
-            (overlay-put overlay 'for-comments t))
-          (goto-char (+ start 3)))
-      t)))
-
-(defun hl-comment-block-before-change (begin end)
-  "Removes comment highlighting overlays in the region that is about to change."
-  (mapc 'delete-overlay (overlays-with-property-in begin end 'for-comments)))
-
-(defun hl-comment-block-after-change (begin end length)
-  "Executes hl-comment-block, starting from the beginning of the line of
-  the beginning of the changed region."
-  (save-excursion
-    (goto-char begin)
-    (beginning-of-line)
-    (while (hl-comment-block (+ end 3)))))
-
-(defun hl-comment-block-enable ()
-  "Enable highlighting top-level comment blocks."
-  (add-hook 'before-change-functions 'hl-comment-block-before-change nil t)
-  (add-hook 'after-change-functions 'hl-comment-block-after-change nil t)
-  (save-excursion
-    (goto-char (point-min))
-    (while (hl-comment-block (point-max)))))
-
-
-;;;-----------------------------------------------------------------------------
-;;; Clojure and cider modes
-;;;-----------------------------------------------------------------------------
-
-;; Require the Clojure packages.
+;; Require the Clojure and Cider package.
 (package-require 'clojure-mode)
 (package-require 'cider)
 
 ;; Make sure paredit is active when clojure mode is active.
 (package-require 'paredit)
 (add-hook 'clojure-mode-hook 'paredit-mode)
+
+;; Add clj-refactor
+(package-require 'clj-refactor)
+(add-hook 'clojure-mode-hook (lambda ()
+                               (clj-refactor-mode 1)
+                               (cljr-add-keybindings-with-prefix "C-c C-o")))
 
 ;; Add better indentation for some symbols.
 (define-clojure-indent
@@ -145,23 +89,11 @@
   (dosync 0)
   (match-form 3)
   (routing 1)
-  (rmap 1))
-
-;; Have highlighted comment blocks.
-(add-hook 'clojure-mode-hook 'hl-comment-block-enable)
+  (rmap 1)
+  (defstate 1))
 
 ;; Bind fill-paragraph to C-c M-q
 (global-set-key (kbd "C-c M-q") 'fill-paragraph)
-
-
-;;;-----------------------------------------------------------------------------
-;;; Scala mode
-;;;-----------------------------------------------------------------------------
-
-;; Require the needed packages and make sure it is active when a Scala file is
-;; loaded. Note that there is also a Scala-mode2, which I must check out some day.
-(package-require 'scala-mode)
-(require 'scala-mode-auto)
 
 
 ;;;-----------------------------------------------------------------------------
@@ -172,43 +104,17 @@
 (package-require 'paredit)
 (add-hook 'emacs-lisp-mode-hook 'paredit-mode)
 
-;; Have highlighted comment blocks in emacs-lisp.
-(add-hook 'emacs-lisp-mode-hook 'hl-comment-block-enable)
-
 ;; Have documentation in emacs-lisp.
 (add-hook 'emacs-lisp-mode-hook 'eldoc-mode)
 
 
 ;;;-----------------------------------------------------------------------------
-;;; Auto-completion
+;;; Company mode
 ;;;-----------------------------------------------------------------------------
 
-;; Have fuzzy completion, but does not seem to work yet as expected.
-(package-require 'fuzzy)
-
-;; Have auto-completion, with standard settings..
-(package-require 'auto-complete)
-(require 'auto-complete-config)
-(ac-config-default)
-(global-auto-complete-mode t)
-
-;; Use the following sources for auto-completion.
-(set-default 'ac-sources
-             '(ac-source-dictionary                  ; from dict files.
-               ac-source-words-in-buffer             ; current buffer
-               ac-source-words-in-same-mode-buffers  ; alike buffers
-               ac-source-filename                    ; filesystem paths
-               ac-source-functions                   ; elisp functions
-               ac-source-symbols))                   ; elisp symbols
-
-;; Use auto-completion in the following modes.
-(dolist (mode '(text-mode html-mode nxml-mode sh-mode clojure-mode
-                          lisp-mode latex-mode scala-mode))
-  (add-to-list 'ac-modes mode))
-
-;; Map auto-complete to M-TAB, to use if it does not pop up automatically.
-(define-key ac-mode-map (kbd "M-TAB") 'auto-complete)
-
+(package-require 'company)
+(add-hook 'cider-repl-mode-hook #'company-mode)
+(add-hook 'cider-mode-hook #'company-mode)
 
 ;;;-----------------------------------------------------------------------------
 ;;; Tab and spaces handling
@@ -245,15 +151,15 @@
 ;; Scroll down to the bottom automatically.
 (add-hook 'erc-mode-hook 'erc-scrolltobottom-mode)
 
-;; Auto-connect when 'yes' is given.
-(defun irc-maybe ()
-  "Connect to IRC, when a password is given."
-  (when (y-or-n-p-with-timeout "Connect to IRC?" 5 nil)
-    (erc-tls :server "irc.freenode.net" :port 7070 :nick "aroemers")))
-
-;; Ask to auto-connect on startup.
-(add-hook 'emacs-startup-hook 'irc-maybe)
-
+;;; Auto-connect when 'yes' is given.
+;(defun irc-maybe ()
+;  "Connect to IRC, when a password is given."
+;  (when (y-or-n-p-with-timeout "Connect to IRC?" 5 nil)
+;    (erc-tls :server "irc.freenode.net" :port 7070 :nick "aroemers")))
+;
+;;; Ask to auto-connect on startup.
+;(add-hook 'emacs-startup-hook 'irc-maybe)
+;
 ;; Have colorised nick-names.
 (package-require 'erc-hl-nicks)
 
@@ -265,7 +171,9 @@
 ;; Add capture template for Online Touch.
 (setq org-capture-templates
       '(("o" "Add item in Online Touch inbox." item
-         (file+headline "~/onlinetouch/ottododone.org" "Inbox") "")))
+             (file+headline "~/Customers/OnlineTouch/todo.org" "Inbox") "")
+        ("t" "Add item in Thorax inbox" item
+             (file+headline "~/Customers/Thorax/todo.org" "Inbox") "")))
 
 ;; Have a shortcut key for org-capture.
 (global-set-key (kbd "C-c o") 'org-capture)
@@ -371,7 +279,7 @@
 (show-paren-mode t)
 
 ;; Go to the last change, using M-l.
-(package-require 'goto-chg)
+(package-require 'goto-last-change)
 (global-set-key (kbd "M-l") 'goto-last-change)
 
 ;; Save backups and autosaves in the system's temporary directory.
@@ -392,13 +300,6 @@
 (projectile-global-mode t)
 (setq shell-file-name "/bin/sh") ; in order to make rgrep work
 
-;; Integrate with the system's clipboard when in a terminal. Does not seem to
-;; work in the terminal on OS X Mountain Lion, while it does work in a terminal
-;; on OS X Lion.
-(when (not window-system)
-  (package-require 'simpleclip)
-  (simpleclip-mode t))
-
 ;; Automatic indention on RET and yanks, and only one space on forward-kills.
 (package-require 'auto-indent-mode)
 (auto-indent-global-mode t)
@@ -417,16 +318,6 @@
 ;; Use git from within emacs.
 (package-require 'magit)
 (global-set-key (kbd "C-x g") 'magit-status)
-(setq magit-last-seen-setup-instructions "1.4.0")
-
-;; Change magit diff colors.
-(eval-after-load 'magit
-  '(progn
-     (set-face-foreground 'magit-diff-add "green3")
-     (set-face-foreground 'magit-diff-del "red3")
-     (set-face-background 'magit-item-highlight "#131315")))
-
-
 
 ;; Have emacs reload buffers from the disk when changed. Currently, it does not
 ;; warn when the buffer is modified _and_ the the file on disk has been
@@ -457,25 +348,17 @@
 (add-hook 'prog-mode-hook 'whitespace-mode)
 
 ;; Have window numbers for faster switching.
-(package-require 'window-number)
-(autoload 'window-number-mode "window-number" t)
-(autoload 'window-number-meta-mode "window-number" t)
-(window-number-mode t)
-(window-number-meta-mode t)
+(package-require 'window-numbering)
+(window-numbering-mode t)
 
 ;; Bind M-o to what C-x o is bound to.
 (global-set-key (kbd "M-o") (key-binding (kbd "C-x o")))
 
-;; Have a MarkDown mode.
-
-(package-require 'markdown-mode)
-
 ;; Have better buffer names for equally named files.
 (require 'uniquify)
 
-;; Have a YAML major mode.
-(package-require 'yaml-mode)
-
+;; Add a markdown mode
+(package-require 'markdown-mode)
 
 ;;;-----------------------------------------------------------------------------
 ;;; Emacs automagically managed settings. Clean up once in a while.
@@ -485,8 +368,6 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(magit-emacsclient-executable "/Applications/Emacs.app/Contents/MacOS/bin/emacsclient")
- '(markdown-command "/usr/local/bin/markdown")
  '(uniquify-buffer-name-style (quote forward) nil (uniquify)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
