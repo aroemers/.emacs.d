@@ -50,7 +50,7 @@
 (if (fboundp 'tool-bar-mode) (tool-bar-mode -1))
 (if (fboundp 'menu-bar-mode) (menu-bar-mode -1))
 (when window-system
-  (set-frame-size (selected-frame) 240 75)
+  (set-frame-size (selected-frame) 240 80)
   (when (eq system-type 'darwin)
     (set-face-attribute 'default nil :height 130)))
 
