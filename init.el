@@ -171,9 +171,11 @@
 ;; Add capture template for Online Touch.
 (setq org-capture-templates
       '(("o" "Add item in Online Touch inbox." item
-             (file+headline "~/Customers/OnlineTouch/todo.org" "Inbox") "")
+         (file+headline "~/Customers/OnlineTouch/todo.org" "Inbox") "")
         ("t" "Add item in Thorax inbox" item
-             (file+headline "~/Customers/Thorax/todo.org" "Inbox") "")))
+         (file+headline "~/Customers/Thorax/todo.org" "Inbox") "")
+        ("f" "Add item in Functional Bytes inbox" item
+         (file+headline "~/Functional Bytes/Documents/todo.org" "Inbox") "")))
 
 ;; Have a shortcut key for org-capture.
 (global-set-key (kbd "C-c o") 'org-capture)
@@ -210,11 +212,6 @@
 (smex-initialize)
 (global-set-key (kbd "M-x") 'smex)
 (global-set-key (kbd "M-X") 'smex-major-mode-commands)
-
-;; Set some colors:
-(set-face-foreground 'ido-first-match "#aaff44")
-(set-face-foreground 'ido-only-match "#aaff44")
-(set-face-foreground 'ido-subdir "#e6db74")
 
 
 ;;;-----------------------------------------------------------------------------
