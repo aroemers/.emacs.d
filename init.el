@@ -90,10 +90,14 @@
   (match-form 3)
   (routing 1)
   (rmap 1)
-  (defstate 1))
+  (defstate 1)
+  (fnp 1))
 
 ;; Bind fill-paragraph to C-c M-q
 (global-set-key (kbd "C-c M-q") 'fill-paragraph)
+
+;; Also enable Clojure mode for a .boot file.
+(add-to-list 'auto-mode-alist '("\\.boot\\'" . clojure-mode))
 
 
 ;;;-----------------------------------------------------------------------------
@@ -175,7 +179,9 @@
         ("t" "Add item in Thorax inbox" item
          (file+headline "~/Customers/Thorax/todo.org" "Inbox") "")
         ("f" "Add item in Functional Bytes inbox" item
-         (file+headline "~/Functional Bytes/Documents/todo.org" "Inbox") "")))
+         (file+headline "~/Functional Bytes/Documents/todo.org" "Inbox") "")
+        ("m" "Add item in MPARE inbox" item
+         (file+headline "~/Customers/MPARE/todo.org" "Inbox") "")))
 
 ;; Have a shortcut key for org-capture.
 (global-set-key (kbd "C-c o") 'org-capture)
@@ -260,6 +266,8 @@
 (package-require 'multiple-cursors)
 (global-set-key (kbd "M-p") 'mc/mark-previous-like-this)
 (global-set-key (kbd "M-n") 'mc/mark-next-like-this)
+(global-set-key (kbd "M-a") 'mc/mark-all-like-this-dwim)
+
 
 ;; Go straight to the *scratch* buffer, i.e. skip the help message. And set a
 ;; nice welcoming message.
@@ -365,6 +373,9 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
+ '(timeclock-ask-before-exiting t)
+ '(timeclock-mode-line-display t)
+ '(timeclock-workday 25200)
  '(uniquify-buffer-name-style (quote forward) nil (uniquify)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
