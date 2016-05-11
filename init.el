@@ -239,6 +239,14 @@
 
 
 ;;;-----------------------------------------------------------------------------
+;;; Gnus email
+;;;-----------------------------------------------------------------------------
+
+(setq gnus-select-method '(nnimap "mail.messagingengine.com"))
+(setq smtpmail-default-smtp-server "mail.messagingengine.com")
+
+
+;;;-----------------------------------------------------------------------------
 ;;; Other niceties
 ;;;-----------------------------------------------------------------------------
 
@@ -364,6 +372,11 @@
 
 ;; Add a markdown mode
 (package-require 'markdown-mode)
+
+;; Add nyan cat.
+(package-require 'nyan-mode)
+(nyan-mode 1)
+
 
 ;;;-----------------------------------------------------------------------------
 ;;; Emacs automagically managed settings. Clean up once in a while.
