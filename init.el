@@ -71,6 +71,7 @@
 (package-require 'clj-refactor)
 (add-hook 'clojure-mode-hook (lambda ()
                                (clj-refactor-mode 1)
+                               (yas-minor-mode 1)
                                (cljr-add-keybindings-with-prefix "C-c C-o")))
 
 ;; Add better indentation for some symbols.
@@ -377,6 +378,12 @@
 (package-require 'nyan-mode)
 (nyan-mode 1)
 
+;; Bind C-c c to compile.
+(global-set-key (kbd "C-c C-c") 'recompile)
+
+;; Bind C-c s to to helm git grep
+(global-set-key (kbd "C-c s") 'helm-grep-do-git-grep)
+
 
 ;;;-----------------------------------------------------------------------------
 ;;; Emacs automagically managed settings. Clean up once in a while.
@@ -386,6 +393,7 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
+ '(projectile-use-git-grep t)
  '(timeclock-ask-before-exiting t)
  '(timeclock-mode-line-display t)
  '(timeclock-workday 25200)
