@@ -50,9 +50,11 @@
 (if (fboundp 'tool-bar-mode) (tool-bar-mode -1))
 (if (fboundp 'menu-bar-mode) (menu-bar-mode -1))
 (when window-system
-  (set-frame-size (selected-frame) 240 80)
+  ;; (set-frame-size (selected-frame) 179 53)
+  (toggle-frame-maximized)
   (when (eq system-type 'darwin)
-    (set-face-attribute 'default nil :height 130)))
+    (set-face-attribute 'default nil :height 120))
+  (setq-default line-spacing 1))
 
 
 ;;;-----------------------------------------------------------------------------
@@ -100,6 +102,9 @@
 ;; Also enable Clojure mode for a .boot file.
 (add-to-list 'auto-mode-alist '("\\.boot\\'" . clojure-mode))
 
+;; Add joker linter
+(package-require 'flycheck-joker)
+
 
 ;;;-----------------------------------------------------------------------------
 ;;; Emacs Lisp mode
@@ -144,50 +149,6 @@
 ;; (add-hook 'before-save-hook 'untabify-maybe)
 
 
-;;;-----------------------------------------------------------------------------
-;;; IRC related
-;;;-----------------------------------------------------------------------------
-
-;; Set some options for ERC.
-(setq erc-hide-list '("JOIN" "PART" "QUIT" "NICK"))
-(setq erc-server-reconnect-timeout 60)
-(setq erc-autojoin-channels-alist '(("freenode.net" "#clojure")))
-
-;; Scroll down to the bottom automatically.
-(add-hook 'erc-mode-hook 'erc-scrolltobottom-mode)
-
-;;; Auto-connect when 'yes' is given.
-;(defun irc-maybe ()
-;  "Connect to IRC, when a password is given."
-;  (when (y-or-n-p-with-timeout "Connect to IRC?" 5 nil)
-;    (erc-tls :server "irc.freenode.net" :port 7070 :nick "aroemers")))
-;
-;;; Ask to auto-connect on startup.
-;(add-hook 'emacs-startup-hook 'irc-maybe)
-;
-;; Have colorised nick-names.
-(package-require 'erc-hl-nicks)
-
-
-;;;----------------------------------------------------------------------------
-;;; Org Mode related
-;;;----------------------------------------------------------------------------
-
-;; Add capture template for Online Touch.
-(setq org-capture-templates
-      '(("o" "Add item in Online Touch inbox." item
-         (file+headline "~/Customers/OnlineTouch/todo.org" "Inbox") "")
-        ("t" "Add item in Thorax inbox" item
-         (file+headline "~/Customers/Thorax/todo.org" "Inbox") "")
-        ("f" "Add item in Functional Bytes inbox" item
-         (file+headline "~/Functional Bytes/Documents/todo.org" "Inbox") "")
-        ("m" "Add item in MPARE inbox" item
-         (file+headline "~/Customers/MPARE/todo.org" "Inbox") "")))
-
-;; Have a shortcut key for org-capture.
-(global-set-key (kbd "C-c o") 'org-capture)
-
-
 ;;;----------------------------------------------------------------------------
 ;;; Ido Mode related
 ;;;----------------------------------------------------------------------------
@@ -199,7 +160,7 @@
 (setq ido-everywhere t)
 
 ;; Have a better ido-everywhere.
-(package-require 'ido-ubiquitous)
+(package-require 'ido-completing-read+)
 (ido-ubiquitous-mode t)
 
 ;; Align the options vertically, and make up-down for options, and left-right
@@ -240,11 +201,12 @@
 
 
 ;;;-----------------------------------------------------------------------------
-;;; Gnus email
+;;; JavaScript mode
 ;;;-----------------------------------------------------------------------------
 
-(setq gnus-select-method '(nnimap "mail.messagingengine.com"))
-(setq smtpmail-default-smtp-server "mail.messagingengine.com")
+(package-require 'js2-mode)
+(add-to-list 'auto-mode-alist '("\\.js\\'" . js2-mode))
+(add-to-list 'auto-mode-alist '("\\.jsx?\\'" . js2-jsx-mode))
 
 
 ;;;-----------------------------------------------------------------------------
@@ -276,7 +238,6 @@
 (global-set-key (kbd "M-p") 'mc/mark-previous-like-this)
 (global-set-key (kbd "M-n") 'mc/mark-next-like-this)
 (global-set-key (kbd "M-a") 'mc/mark-all-like-this-dwim)
-
 
 ;; Go straight to the *scratch* buffer, i.e. skip the help message. And set a
 ;; nice welcoming message.
@@ -384,6 +345,28 @@
 ;; Bind C-c s to to helm git grep
 (global-set-key (kbd "C-c s") 'helm-grep-do-git-grep)
 
+;; Install yaml-mode
+(package-require 'yaml-mode)
+
+;; Install avy navigation
+(package-require 'avy)
+(global-set-key (kbd "C-;") 'avy-goto-char-timer)
+
+;; Display bound keys
+(package-require 'which-key)
+(which-key-mode)
+(which-key-setup-side-window-right)
+
+;; Enable flycheck for all global modes
+(global-flycheck-mode t)
+(setq flycheck-global-modes t)
+
+;; Set exec-path from shell
+(package-require 'exec-path-from-shell)
+
+(when (memq window-system '(mac ns x))
+  (exec-path-from-shell-initialize))
+
 
 ;;;-----------------------------------------------------------------------------
 ;;; Emacs automagically managed settings. Clean up once in a while.
@@ -393,10 +376,15 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
+ '(avy-background t)
+ '(avy-keys (quote (97 114 115 116 100 104 110 101 105)))
+ '(cider-cljs-lein-repl
+   "(do (require 'figwheel-sidecar.repl-api) (figwheel-sidecar.repl-api/start-figwheel!) (figwheel-sidecar.repl-api/cljs-repl))")
+ '(cljr-favor-prefix-notation nil)
+ '(package-selected-packages
+   (quote
+    (rainbow-mode dockerfile-mode moody mustache-mode flycheck-joker yaml-mode window-numbering which-key undo-tree smex projectile ox-ioslide nyan-mode monokai-theme markdown-mode magit ido-vertical-mode ido-ubiquitous groovy-mode goto-last-change git-timemachine git-gutter flx-ido expand-region erc-hl-nicks company clojure-cheatsheet clj-refactor avy auto-indent-mode adoc-mode)))
  '(projectile-use-git-grep t)
- '(timeclock-ask-before-exiting t)
- '(timeclock-mode-line-display t)
- '(timeclock-workday 25200)
  '(uniquify-buffer-name-style (quote forward) nil (uniquify)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
