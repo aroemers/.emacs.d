@@ -53,8 +53,8 @@
   ;; (set-frame-size (selected-frame) 179 53)
   (toggle-frame-maximized)
   (when (eq system-type 'darwin)
-    (set-face-attribute 'default nil :height 120))
-  (setq-default line-spacing 1))
+    (set-face-attribute 'default nil :height 130))
+  (setq-default line-spacing 3))
 
 
 ;;;-----------------------------------------------------------------------------
@@ -207,6 +207,13 @@
 (package-require 'js2-mode)
 (add-to-list 'auto-mode-alist '("\\.js\\'" . js2-mode))
 (add-to-list 'auto-mode-alist '("\\.jsx?\\'" . js2-jsx-mode))
+
+
+;;;-----------------------------------------------------------------------------
+;;; CSS/SCSS mode
+;;;-----------------------------------------------------------------------------
+
+(setq css-indent-offset 2)
 
 
 ;;;-----------------------------------------------------------------------------
@@ -365,7 +372,8 @@
 (package-require 'exec-path-from-shell)
 
 (when (memq window-system '(mac ns x))
-  (exec-path-from-shell-initialize))
+  (exec-path-from-shell-initialize)
+  (exec-path-from-shell-copy-env "JAVA_HOME"))
 
 
 ;;;-----------------------------------------------------------------------------
@@ -383,7 +391,7 @@
  '(cljr-favor-prefix-notation nil)
  '(package-selected-packages
    (quote
-    (rainbow-mode dockerfile-mode moody mustache-mode flycheck-joker yaml-mode window-numbering which-key undo-tree smex projectile ox-ioslide nyan-mode monokai-theme markdown-mode magit ido-vertical-mode ido-ubiquitous groovy-mode goto-last-change git-timemachine git-gutter flx-ido expand-region erc-hl-nicks company clojure-cheatsheet clj-refactor avy auto-indent-mode adoc-mode)))
+    (puppet-mode request tide rainbow-mode dockerfile-mode moody mustache-mode flycheck-joker yaml-mode window-numbering which-key undo-tree smex projectile ox-ioslide nyan-mode monokai-theme markdown-mode magit ido-vertical-mode ido-ubiquitous groovy-mode goto-last-change git-timemachine git-gutter flx-ido expand-region erc-hl-nicks company clojure-cheatsheet clj-refactor avy auto-indent-mode adoc-mode)))
  '(projectile-use-git-grep t)
  '(uniquify-buffer-name-style (quote forward) nil (uniquify)))
 (custom-set-faces
