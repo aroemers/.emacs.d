@@ -78,32 +78,24 @@
 
 ;; Add better indentation for some symbols.
 (define-clojure-indent
-  (try-let 1)
-  (with-resource 'defun)
-  (fact 1)
-  (facts 1)
-  (guard-let 1)
-  (cond-let 1)
-  (asserts 1)
-  (if-let* 1)
-  (when-let* 1)
-  (forcat 1)
-  (go-loop 1)
-  (dosync 0)
-  (match-form 3)
-  (routing 1)
-  (rmap 1)
-  (defstate 1)
-  (fnp 1))
+  (defstate 1))
 
 ;; Bind fill-paragraph to C-c M-q
 (global-set-key (kbd "C-c M-q") 'fill-paragraph)
 
-;; Also enable Clojure mode for a .boot file.
-(add-to-list 'auto-mode-alist '("\\.boot\\'" . clojure-mode))
-
 ;; Add joker linter
 (package-require 'flycheck-joker)
+
+
+;;;-----------------------------------------------------------------------------
+;;; Scala mode
+;;;-----------------------------------------------------------------------------
+
+(package-require 'scala-mode)
+
+(package-require 'lsp-mode)
+(package-require 'company-lsp)
+(add-hook 'scala-mode-hook 'lsp)
 
 
 ;;;-----------------------------------------------------------------------------
@@ -125,6 +117,7 @@
 (package-require 'company)
 (add-hook 'cider-repl-mode-hook #'company-mode)
 (add-hook 'cider-mode-hook #'company-mode)
+(global-set-key (kbd "M-SPC") 'company-complete)
 
 ;;;-----------------------------------------------------------------------------
 ;;; Tab and spaces handling
@@ -201,22 +194,6 @@
 
 
 ;;;-----------------------------------------------------------------------------
-;;; JavaScript mode
-;;;-----------------------------------------------------------------------------
-
-(package-require 'js2-mode)
-(add-to-list 'auto-mode-alist '("\\.js\\'" . js2-mode))
-(add-to-list 'auto-mode-alist '("\\.jsx?\\'" . js2-jsx-mode))
-
-
-;;;-----------------------------------------------------------------------------
-;;; CSS/SCSS mode
-;;;-----------------------------------------------------------------------------
-
-(setq css-indent-offset 2)
-
-
-;;;-----------------------------------------------------------------------------
 ;;; Other niceties
 ;;;-----------------------------------------------------------------------------
 
@@ -279,7 +256,8 @@
 
 ;; Add projectile, e.g. for quickly opening files and searching in files.
 (package-require 'projectile)
-(projectile-global-mode t)
+(projectile-mode t)
+(global-set-key (kbd "C-c p") 'projectile-command-map)
 (setq shell-file-name "/bin/sh") ; in order to make rgrep work
 
 ;; Automatic indention on RET and yanks, and only one space on forward-kills.
@@ -325,7 +303,7 @@
 
 ;; Have too long lines highlighted.
 (require 'whitespace)
-(setq whitespace-line-column 100)
+(setq whitespace-line-column 80)
 (setq whitespace-style '(face lines-tail))
 (add-hook 'prog-mode-hook 'whitespace-mode)
 
@@ -348,9 +326,6 @@
 
 ;; Bind C-c c to compile.
 (global-set-key (kbd "C-c C-c") 'recompile)
-
-;; Bind C-c s to to helm git grep
-(global-set-key (kbd "C-c s") 'helm-grep-do-git-grep)
 
 ;; Install yaml-mode
 (package-require 'yaml-mode)
@@ -391,7 +366,7 @@
  '(cljr-favor-prefix-notation nil)
  '(package-selected-packages
    (quote
-    (puppet-mode request tide rainbow-mode dockerfile-mode moody mustache-mode flycheck-joker yaml-mode window-numbering which-key undo-tree smex projectile ox-ioslide nyan-mode monokai-theme markdown-mode magit ido-vertical-mode ido-ubiquitous groovy-mode goto-last-change git-timemachine git-gutter flx-ido expand-region erc-hl-nicks company clojure-cheatsheet clj-refactor avy auto-indent-mode adoc-mode)))
+    (terraform-mode restclient tabbar exec-path-from-shell which-key avy yaml-mode nyan-mode markdown-mode window-numbering magit auto-indent-mode projectile goto-last-change expand-region git-gutter undo-tree smex flx-ido ido-vertical-mode ido-completing-read+ company flycheck-joker clj-refactor paredit cider clojure-mode monokai-theme)))
  '(projectile-use-git-grep t)
  '(uniquify-buffer-name-style (quote forward) nil (uniquify)))
 (custom-set-faces
