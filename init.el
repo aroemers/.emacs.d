@@ -2,6 +2,7 @@
 ;;; Convenient package handling in emacs
 ;;;-----------------------------------------------------------------------------
 
+(setq warning-minimum-level :error)
 (require 'package)
 
 ;; Add automatically parsed versiontracking repositories.
@@ -303,7 +304,7 @@
 
 ;; Have too long lines highlighted.
 (require 'whitespace)
-(setq whitespace-line-column 80)
+(setq whitespace-line-column 100)
 (setq whitespace-style '(face lines-tail))
 (add-hook 'prog-mode-hook 'whitespace-mode)
 
