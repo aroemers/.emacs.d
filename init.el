@@ -308,9 +308,14 @@
 
 ;; Add nyan cat.
 (use-package nyan-mode
-  :if window-system
+  :if
+  window-system
+
   :config
-  (nyan-mode 1))
+  (nyan-mode 1)
+
+  :custom
+  (nyan-minimum-window-width 175))
 
 ;; Install yaml-mode
 (use-package yaml-mode)
