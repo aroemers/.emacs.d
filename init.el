@@ -21,7 +21,14 @@
 
 (require 'package)
 
-(add-to-list 'package-archives '("melpa-stable" . "https://stable.melpa.org/packages/") t)
+(setq package-archives
+      '(("GNU ELPA"     . "https://elpa.gnu.org/packages/")
+        ("MELPA Stable" . "https://stable.melpa.org/packages/")
+        ("MELPA"        . "https://melpa.org/packages/"))
+      package-archive-priorities
+      '(("MELPA Stable" . 10)
+        ("GNU ELPA"     . 5)
+        ("MELPA"        . 0)))
 
 (package-initialize)
 
@@ -48,7 +55,7 @@
 ;;;-----------------------------------------------------------------------------
 
 ;; Load theme package and configure window.
-(use-package monokai-theme
+(use-package twilight-bright-theme ;monokai-theme
   :if
   window-system
 
@@ -62,7 +69,7 @@
   (setq-default line-spacing 3)
 
   ;; Set the color of some other parts of Emacs.
-  (set-face-background 'cursor "chartreuse1")
+  (set-face-background 'cursor "black") ;chartreuse1
 
   ;; Maximize frame on startup.
   (toggle-frame-maximized)
@@ -334,6 +341,11 @@
   :config
   (global-hl-todo-mode))
 
+;; Add restclient
+(use-package restclient
+  :ensure t
+  :mode (("\\.http\\'" . restclient-mode)))
+
 
 ;;;-----------------------------------------------------------------------------
 ;;; Tab and spaces handling.
@@ -355,7 +367,7 @@
 ;;; Term related settings.
 ;;;-----------------------------------------------------------------------------
 
-;; Clear ansi-term buffer with C-c C-b (Clear Buffer),
+;; Clear ansi-term buffer with C-c C-b (Clear Buffer).
 (add-hook 'term-mode-hook
           (lambda ()
             (define-key term-raw-map (kbd "C-c C-b")
@@ -367,6 +379,9 @@
 (defadvice ansi-term (after advise-ansi-term-coding-system)
   (set-buffer-process-coding-system 'utf-8-unix 'utf-8-unix))
 (ad-activate 'ansi-term)
+
+;; Set default shell binary.
+(setq explicit-shell-file-name "/bin/zsh")
 
 
 ;;;-----------------------------------------------------------------------------
