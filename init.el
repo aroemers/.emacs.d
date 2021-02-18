@@ -38,6 +38,8 @@
 
 (require 'use-package)
 
+(setq use-package-always-ensure t)
+
 
 ;;;-----------------------------------------------------------------------------
 ;;; Execution path.
@@ -55,7 +57,7 @@
 ;;;-----------------------------------------------------------------------------
 
 ;; Load theme package and configure window.
-(use-package twilight-bright-theme ;monokai-theme
+(use-package dracula-theme
   :if
   window-system
 
@@ -63,13 +65,14 @@
   ;; Disable scrollbar and toolbar.
   (scroll-bar-mode -1)
   (tool-bar-mode -1)
+  (load-theme 'dracula t)
 
   ;; Update fonts.
   (set-face-attribute 'default nil :height 130)
   (setq-default line-spacing 3)
 
   ;; Set the color of some other parts of Emacs.
-  (set-face-background 'cursor "black") ;chartreuse1
+  (set-face-background 'cursor "chartreuse1")
 
   ;; Maximize frame on startup.
   (toggle-frame-maximized)
@@ -129,44 +132,53 @@
 ;;; Scala development.
 ;;;-----------------------------------------------------------------------------
 
-(use-package scala-mode
-  :mode
-  "\\.s\\(cala\\|bt\\)$")
+;; (use-package scala-mode
+;;   :mode
+;;   "\\.s\\(cala\\|bt\\)$")
 
-(use-package sbt-mode
-  :commands
-  (sbt-start sbt-command)
+;; (use-package sbt-mode
+;;   :commands
+;;   sbt-start
+;;   sbt-command
 
-  :custom
-  (sbt:program-options '("-Dsbt.supershell=false")))
+;;   :custom
+;;   (sbt:program-options '("-Dsbt.supershell=false")))
 
-(use-package flycheck
-  :hook
-  (scala-mode . flycheck-mode))
+;; (use-package flycheck
+;;   :hook
+;;   (scala-mode . flycheck-mode))
 
-(use-package lsp-mode
-  :hook
-  (scala-mode . lsp)
-  (lsp-mode . lsp-lens-mode)
+;; (use-package lsp-mode
+;;   :hook
+;;   (scala-mode . lsp)
+;;   (lsp-mode . lsp-lens-mode)
 
-  :custom
-  (lsp-prefer-flymake nil))
+;;   :custom
+;;   (lsp-prefer-flymake nil))
 
-(use-package lsp-ui)
+;; (use-package lsp-metals)
 
-(use-package yasnippet
-  :hook
-  (scala-mode . yas-minor-mode))
+;; (use-package lsp-ui)
 
-(use-package company
-  :hook
-  (scala-mode . company-mode)
+;; (use-package yasnippet
+;;   :hook
+;;   (scala-mode . yas-minor-mode))
 
-  :bind
-  ("M-SPC" . company-complete))
+;; (use-package company
+;;   :hook
+;;   (scala-mode . company-mode)
 
-(use-package company-lsp)
+;;   :bind
+;;   ("M-SPC" . company-complete))
 
+;; (use-package company-lsp)
+
+;; (use-package lsp-treemacs
+;;   :config
+;;   (lsp-metals-treeview-enable t)
+
+;;   :custom
+;;   (lsp-metals-treeview-show-when-views-received t))
 
 ;;;-----------------------------------------------------------------------------
 ;;; Emacs Lisp development.
@@ -346,6 +358,10 @@
   :ensure t
   :mode (("\\.http\\'" . restclient-mode)))
 
+;; Support mustache templating
+(use-package mustache-mode
+  :ensure t)
+
 
 ;;;-----------------------------------------------------------------------------
 ;;; Tab and spaces handling.
@@ -392,6 +408,7 @@
 ;; And set a nice welcoming message.
 (setq inhibit-startup-screen t)
 (setq initial-scratch-message ";; Happy hacking, Arnout!\n\n")
+(setq initial-major-mode 'clojure-mode)
 
 ;; Show column number next to linenumber in the status bar.
 (column-number-mode t)
@@ -464,9 +481,10 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
+ '(custom-safe-themes
+   '("fe1c13d75398b1c8fd7fdd1241a55c286b86c3e4ce513c4292d01383de152cb7" "5f27195e3f4b85ac50c1e2fac080f0dd6535440891c54fcfa62cdcefedf56b1b" default))
  '(package-selected-packages
-   (quote
-    (sbt-mode yaml-mode window-numbering which-key use-package undo-tree smex scala-mode projectile nyan-mode monokai-theme magit lsp-ui ido-vertical-mode ido-completing-read+ hl-todo goto-last-change git-gutter flycheck-joker flx-ido expand-region exec-path-from-shell company-lsp clj-refactor avy auto-indent-mode))))
+   '(dracula-theme lsp-metals mustache-mode sbt-mode yaml-mode window-numbering which-key use-package undo-tree smex scala-mode projectile nyan-mode monokai-theme magit lsp-ui ido-vertical-mode ido-completing-read+ hl-todo goto-last-change git-gutter flycheck-joker flx-ido expand-region exec-path-from-shell company-lsp clj-refactor avy auto-indent-mode)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
