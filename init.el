@@ -89,13 +89,14 @@
 ;;; Clojure development.
 ;;;-----------------------------------------------------------------------------
 
-;; Require the Clojure and Cider package.
+;; Require the Clojure mode.
 (use-package clojure-mode
   :config
   ;; Add better indentation for some forms.
   (define-clojure-indent
     (defstate 1)))
 
+;; Require the Cider package for a REPL.
 (use-package cider)
 
 ;; Enable paredit.
@@ -103,23 +104,7 @@
   :hook
   (clojure-mode . paredit-mode))
 
-;; Enable clj-refactor
-(use-package clj-refactor
-  :hook
-  (clojure-mode . clj-refactor-mode)
-
-  :bind-keymap
-  ("C-c C-o" . clj-refactor-map))
-
-;; Add joker linter.
-(use-package flycheck-joker
-  :hook
-  (clojure-mode . flycheck-mode))
-
-(use-package yasnippet
-  :hook
-  (clojure-mode . yas-minor-mode))
-
+;; Completions in Cider.
 (use-package company
   :hook
   (cider-repl-mode . company-mode)
@@ -127,6 +112,35 @@
 
   :bind
   ("M-SPC" . company-complete))
+
+;; Use Clojure-lsp for static analysis.
+(use-package lsp-mode
+  :ensure t
+
+  :hook ((clojure-mode . lsp)
+         (clojurec-mode . lsp)
+         (clojurescript-mode . lsp))
+
+  :config
+  (dolist (m '(clojure-mode clojurec-mode clojurescript-mode clojurex-mode))
+    (add-to-list 'lsp-language-id-configuration `(,m . "clojure"))))
+
+;; For lsp UI-feedback.
+(use-package lsp-ui
+  :commands lsp-ui-mode
+
+  :config
+  (setq lsp-ui-doc-enable nil))
+
+;; For lsp completions.
+(use-package company-lsp
+  :commands company-lsp)
+
+;; Preview function definition arguments.
+(use-package yasnippet
+  :hook
+  (clojure-mode . yas-minor-mode))
+
 
 ;;;-----------------------------------------------------------------------------
 ;;; Scala development.
@@ -192,9 +206,9 @@
   :hook
   (emacs-lisp-mode . eldoc-mode))
 
-(use-package flycheck
-  :hook
-  (emacs-lisp-mode . flycheck-mode))
+;; (use-package flycheck
+;;   :hook
+;;   (emacs-lisp-mode . flycheck-mode))
 
 
 ;;;-----------------------------------------------------------------------------
@@ -481,10 +495,8 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(custom-safe-themes
-   '("fe1c13d75398b1c8fd7fdd1241a55c286b86c3e4ce513c4292d01383de152cb7" "5f27195e3f4b85ac50c1e2fac080f0dd6535440891c54fcfa62cdcefedf56b1b" default))
  '(package-selected-packages
-   '(dracula-theme lsp-metals mustache-mode sbt-mode yaml-mode window-numbering which-key use-package undo-tree smex scala-mode projectile nyan-mode monokai-theme magit lsp-ui ido-vertical-mode ido-completing-read+ hl-todo goto-last-change git-gutter flycheck-joker flx-ido expand-region exec-path-from-shell company-lsp clj-refactor avy auto-indent-mode)))
+   '(yaml-mode window-numbering which-key use-package undo-tree smex scala-mode sbt-mode restclient projectile nyan-mode mustache-mode monokai-theme magit lsp-ui lsp-metals ido-vertical-mode ido-completing-read+ hl-todo goto-last-change git-gutter flycheck-joker flx-ido expand-region exec-path-from-shell dracula-theme company-lsp clj-refactor auto-indent-mode)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
